@@ -103,7 +103,39 @@ After submitting, Forage showed a model answer. It loads the spreadsheet, calcul
 
 ## Step 3: Chatbot (Task 2)
 
-*To be completed in the next stage.*
+**Forage brief:** develop an AI chatbot that analyses financial data and provides insights, integrate the Task 1 data, and test that it communicates performance insights and comparisons effectively.
+
+### Version 1: predefined queries
+I started with the simplest possible approach: exact questions mapped to answers with `if`/`elif` logic (`simple_chatbot` in `chatbot/financial_chatbot.py`). It answers five fixed questions about one company and the latest year.
+
+**What I learned from it:** it works, but "What was Tesla's revenue?" fails because the wording is not an exact match. For GFC's diverse client base, that is not user-friendly enough.
+
+### Version 2: the GFC Financial Chatbot
+A rule-based natural language understanding pipeline (`FinancialChatbot`):
+1. **Normalise** the message (lower case, strip punctuation).
+2. **Extract entities**: company (including tickers such as MSFT), fiscal year (including "FY25", "latest", "last year") and metric (synonym dictionaries, longest phrase wins, so "liabilities to assets" beats "liabilities").
+3. **Classify intent**: value, change, trend, comparison, health summary, help.
+4. **Conversation memory**: a partial question ("What about Microsoft?", "And in 2024?") borrows what is missing from the previous turn. A complete new question stands alone.
+5. **Answer** from the verified dataset in plain English, with figures in billions, ratios explained, and context notes for one-off items (Tesla's FY2023 tax benefit, Apple's FY2024 tax charge, Microsoft's Activision acquisition).
+
+**Data integration:** the bot reads `data/financial_analysis.csv` from Task 1 directly. Companies and years come from the file, so new data needs no code changes.
+
+### Testing
+- 27 automated tests (`tests/test_chatbot.py`, run with `pytest -q`) check values against the dataset, changes, trends, comparisons, follow-ups, context notes, and that the bot declines questions it cannot answer.
+- **Bugs the tests and trial conversations caught before release:**
+  - "Over the last year" was first read as FY2024 instead of the latest year.
+  - "Least leveraged" was not recognised until I added "leveraged" as a keyword.
+  - An off-topic question reused the previous topic instead of saying it did not understand.
+  - A complete new question was wrongly treated as a follow-up.
+  - Trend answers repeated context notes; now limited to one per company.
+
+### Demonstration
+`notebooks/02_financial_chatbot.ipynb` (exported as `BCG_GenAI_Task2_Gibson_Nyendwa.html`) walks through both versions, a sample client conversation, refusals, the help text, the test results, limitations and next steps.
+
+### Talking points
+- **Why rule-based rather than an LLM?** For a financial client, accuracy comes first. A rule-based bot can only state verified figures. The recommended next step is an LLM layer for flexible phrasing, grounded in the same verified data (retrieval-augmented generation), so it cannot invent numbers.
+- **Why decline rather than guess?** A confident wrong figure would damage GFC's trust with its clients. "I don't have data for that" is the safer answer.
+- **Why context notes?** "Tesla's net income fell 52.7%" without the one-off tax benefit explained could lead a client to the wrong conclusion.
 
 ---
 

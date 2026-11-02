@@ -13,7 +13,7 @@ Global Finance Corp. (GFC) needs to analyse corporate financial performance fast
 | Stage | What it covers | Status |
 |---|---|---|
 | Task 1 | Extract 10-K data and analyse trends in Python | Complete |
-| Task 2 | Build the financial chatbot | In progress |
+| Task 2 | Build and test the financial chatbot | Complete: engine, 27 tests, demo notebook |
 
 ## Repository structure
 
@@ -27,8 +27,14 @@ bcg-genai-chatbot/
 │   └── BCG_GenAI_Task1_Financial_Analysis.xlsx  # Analysis workbook: raw data, growth, ratios, summary
 ├── notebooks/
 │   ├── 01_financial_analysis.ipynb            # Task 1 analysis
-│   └── BCG_GenAI_Task1_Gibson_Nyendwa.html    # Notebook exported for Forage submission
+│   ├── BCG_GenAI_Task1_Gibson_Nyendwa.html    # Task 1 notebook exported for Forage submission
+│   ├── 02_financial_chatbot.ipynb             # Task 2 chatbot demo, testing and limitations
+│   └── BCG_GenAI_Task2_Gibson_Nyendwa.html    # Task 2 notebook exported for Forage submission
 ├── charts/                                    # Trend charts produced by the notebook
+├── chatbot/
+│   └── financial_chatbot.py                   # Task 2 chatbot: v1 predefined queries + v2 NLP engine, CLI
+├── tests/
+│   └── test_chatbot.py                        # 27 automated accuracy tests (pytest)
 ├── docs/
 │   ├── Task1_Data_Analysis_Report.md          # Task 1 deliverable: findings and financial health summary
 │   ├── BUILD_LOG.md                           # Step-by-step build process and decisions
@@ -48,7 +54,37 @@ bcg-genai-chatbot/
 
 ```bash
 pip install -r requirements.txt
-jupyter notebook notebooks/01_financial_analysis.ipynb
+
+# Chat with the bot in your terminal
+python -m chatbot.financial_chatbot
+
+# Run the tests
+pytest -q
+
+# Open the notebooks
+jupyter notebook notebooks/
+```
+
+## Example conversation
+
+```
+You: How has Tesla's net income changed over the last year?
+Bot: Tesla's net income fell 46.5% in FY2025, from $7.1bn to $3.8bn.
+  Context: Tesla linked the fall to lower vehicle deliveries and regulatory credit
+  revenue, tariffs, and higher spending on AI and R&D.
+
+You: What about Microsoft?
+Bot: Microsoft's net income rose 15.5% in FY2025, from $88.1bn to $101.8bn.
+
+You: Which company is least leveraged?
+Bot: Liabilities-to-assets ratio in FY2025 (lowest first):
+  1. Tesla: 39.9%
+  2. Microsoft: 44.5%
+  3. Apple: 79.5%
+
+You: What is Amazon's revenue?
+Bot: I don't have data for Amazon. I currently cover Microsoft, Tesla and Apple
+     for FY2023 to FY2025.
 ```
 
 ## Key findings (Task 1)
