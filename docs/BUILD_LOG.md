@@ -118,6 +118,11 @@ A rule-based natural language understanding pipeline (`FinancialChatbot`):
 4. **Conversation memory**: a partial question ("What about Microsoft?", "And in 2024?") borrows what is missing from the previous turn. A complete new question stands alone.
 5. **Answer** from the verified dataset in plain English, with figures in billions, ratios explained, and context notes for one-off items (Tesla's FY2023 tax benefit, Apple's FY2024 tax charge, Microsoft's Activision acquisition).
 
+**Communicating insights** (added after reading Forage's guidance on this):
+- **Simplification:** figures in billions, one-line plain-English meanings for ratios, and health summaries with a verdict.
+- **Interactive dialogue:** every answer suggests two related follow-up questions; after a ranking, the suggestion is about the company that came first.
+- **Visual aids:** "Show a chart of revenue" draws a text bar chart in the chat, explains how to read it, and points to the saved line chart.
+
 **Data integration:** the bot reads `data/financial_analysis.csv` from Task 1 directly. Companies and years come from the file, so new data needs no code changes.
 
 ### Testing
