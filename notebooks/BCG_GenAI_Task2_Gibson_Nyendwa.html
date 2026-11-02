@@ -7796,7 +7796,7 @@ a.anchor-link {
 <!-- End of mermaid configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 <main>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=de876e9f">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=f09e2a94">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7817,7 +7817,7 @@ a.anchor-link {
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=83138546">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=546fb497">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7827,7 +7827,7 @@ a.anchor-link {
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=b530ca62">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=e926ce3f">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7972,7 +7972,7 @@ a.anchor-link {
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=c0887f4e">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=51c61c62">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7982,7 +7982,7 @@ a.anchor-link {
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=75474e13">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=60f7b8a7">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8036,7 +8036,7 @@ Bot: Sorry, I can only provide information on predefined queries.
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=f811092d">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=996db728">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8047,7 +8047,7 @@ Bot: Sorry, I can only provide information on predefined queries.
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=57e32cb8">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=c8d750e3">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8100,7 +8100,43 @@ Bot: Sorry, I can only provide information on predefined queries.
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=2bcda878">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=4d435d03">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="How-the-build-applies-the-three-principles-of-chatbot-development">How the build applies the three principles of chatbot development<a class="anchor-link" href="#How-the-build-applies-the-three-principles-of-chatbot-development">¶</a></h3><table>
+<thead>
+<tr>
+<th>Principle</th>
+<th>What it means</th>
+<th>Where it is in the code</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Rule-based logic</strong></td>
+<td>If the user asks X, respond with Y</td>
+<td>Version 1 maps exact questions with <code>if</code>/<code>elif</code>. Version 2 uses rules too, but on <em>meaning</em> rather than exact wording: keyword dictionaries identify the company, year, metric and intent, and each intent has its own response rule (<code>_answer_value</code>, <code>_answer_change</code>, <code>_answer_trend</code>, <code>_answer_compare</code>, <code>_answer_summary</code>).</td>
+</tr>
+<tr>
+<td><strong>State management</strong></td>
+<td>Remember the conversation's context</td>
+<td>The <code>Memory</code> object stores the last company, metric, year and intent. "What about Microsoft?" or "And in 2024?" borrow whatever they leave out. A complete new question replaces the memory, so old context never leaks into an unrelated answer.</td>
+</tr>
+<tr>
+<td><strong>Error handling</strong></td>
+<td>Handle unrecognised queries gracefully and guide the user</td>
+<td>Unrecognised questions get "Sorry, I didn't understand that" with a pointer to <code>help</code>. Companies or years outside the data are declined by name. A change for the first year explains why it can't be calculated and suggests a year that works. Empty messages are caught.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=552c8045">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8139,7 +8175,7 @@ Bot: Sorry, I can only provide information on predefined queries.
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=21823ddd">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=fe61b9e6">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8149,7 +8185,7 @@ Bot: Sorry, I can only provide information on predefined queries.
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=6fe30a14">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=e2abc51f">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8236,7 +8272,7 @@ Bot: Apple's net income in FY2024 was $93.7bn, which fell 3.4% on FY2023.
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=5b5d54d8">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=c71fc74d">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8246,7 +8282,7 @@ Bot: Apple's net income in FY2024 was $93.7bn, which fell 3.4% on FY2023.
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=fa862d5f">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=5d794d44">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8288,7 +8324,7 @@ Bot: FY2023 is the first year in my data, so I can't calculate a change for it. 
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=bcc025ee">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=08d2b914">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8298,7 +8334,7 @@ Bot: FY2023 is the first year in my data, so I can't calculate a change for it. 
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=243fdc83">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=4e532a37">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8335,7 +8371,7 @@ Bot: FY2023 is the first year in my data, so I can't calculate a change for it. 
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=72b3e332">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=0204f164">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8345,7 +8381,7 @@ Bot: FY2023 is the first year in my data, so I can't calculate a change for it. 
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=3e2abcd0">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=2b19b0db">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8369,7 +8405,7 @@ Bot: FY2023 is the first year in my data, so I can't calculate a change for it. 
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>...........................                                              [100%]
-27 passed in 0.28s
+27 passed in 0.30s
 
 </pre>
 </div>
@@ -8377,7 +8413,7 @@ Bot: FY2023 is the first year in my data, so I can't calculate a change for it. 
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=163699a2">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=696f0387">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
