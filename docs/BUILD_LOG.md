@@ -121,7 +121,7 @@ A rule-based natural language understanding pipeline (`FinancialChatbot`):
 **Data integration:** the bot reads `data/financial_analysis.csv` from Task 1 directly. Companies and years come from the file, so new data needs no code changes.
 
 ### Testing
-- 27 automated tests (`tests/test_chatbot.py`, run with `pytest -q`) check values against the dataset, changes, trends, comparisons, follow-ups, context notes, and that the bot declines questions it cannot answer.
+- 31 automated tests (`tests/test_chatbot.py`, run with `pytest -q`) check values against the dataset, changes, trends, comparisons, follow-ups, context notes, and that the bot declines questions it cannot answer.
 - **Bugs the tests and trial conversations caught before release:**
   - "Over the last year" was first read as FY2024 instead of the latest year.
   - "Least leveraged" was not recognised until I added "leveraged" as a keyword.

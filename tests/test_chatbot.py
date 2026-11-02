@@ -149,3 +149,24 @@ def test_simple_chatbot_predefined_queries():
     assert "$281.7bn" in simple_chatbot("What is the total revenue?")
     assert "rose 15.5%" in simple_chatbot("How has net income changed over the last year?")
     assert "predefined queries" in simple_chatbot("Something else")
+
+
+# ---------- communicating insights: visuals and suggested follow-ups ----------
+
+def test_chart_request_draws_text_bars(bot):
+    reply = bot.respond("Show a chart of revenue")
+    assert "█" in reply and "charts/revenue_trend.png" in reply
+    assert "Apple up, Microsoft up, Tesla down" in reply
+
+
+def test_answers_suggest_follow_up_questions(bot):
+    assert "You could also ask" in bot.respond("What was Apple's revenue in 2025?")
+
+
+def test_suggestions_follow_the_ranking_leader(bot):
+    assert '"How healthy is Microsoft?"' in bot.respond("Which company has the highest net margin?")
+
+
+def test_suggestions_can_be_switched_off():
+    quiet = FinancialChatbot(suggestions=False)
+    assert "You could also ask" not in quiet.respond("What was Apple's revenue in 2025?")

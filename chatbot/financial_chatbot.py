@@ -112,6 +112,14 @@ CONTEXT_NOTES = {
     ("Apple", "leverage", None): "Apple's high ratio is a deliberate choice: it returns large amounts of cash to shareholders through buybacks and dividends, which keeps equity low. It is not a sign of distress.",
 }
 
+# Saved chart images from the Task 1 notebook, referenced when a user asks for a visual
+CHART_FILES = {
+    "revenue": "charts/revenue_trend.png",
+    "net_income": "charts/net_income_trend.png",
+    "net_margin": "charts/net_margin_trend.png",
+    "operating_cash_flow": "charts/operating_cash_flow_trend.png",
+}
+
 HEALTH_VERDICTS = {
     "Microsoft": "Strong and improving: the fastest growth, highest margins and falling leverage of the three.",
     "Apple": "Strong, with growth returning: record net income in FY2025 after a one-off tax charge in FY2024.",
@@ -128,6 +136,8 @@ INTENT_KEYWORDS = {
                 "who has", "who had", "all three", "all companies"],
     "summary": ["summary", "summarise", "summarize", "overview", "health", "healthy", "how is", "how's", "how are",
                 "doing", "performance", "tell me about", "overall"],
+    "chart": ["chart", "graph", "plot", "visual", "visualise", "visualize", "visualisation",
+              "visualization", "draw", "picture"],
     "trend": ["trend", "over time", "over the years", "over the last three", "three years", "3 years",
               "history", "since 2023", "2023 to 2025", "each year"],
     "change": ["change", "changed", "growth", "grow", "grew", "increase", "increased", "decrease",
@@ -177,7 +187,8 @@ class Memory:
 # --------------------------------------------------------------------------
 
 class FinancialChatbot:
-    def __init__(self, data_path: Path | str = DATA_PATH):
+    def __init__(self, data_path: Path | str = DATA_PATH, suggestions: bool = True):
+        self.suggestions = suggestions
         self.df = pd.read_csv(data_path).sort_values(["Company", "Fiscal Year"]).reset_index(drop=True)
         self.companies = sorted(self.df["Company"].unique())
         self.years = sorted(int(y) for y in self.df["Fiscal Year"].unique())
@@ -218,7 +229,7 @@ class FinancialChatbot:
         return None
 
     def _find_intent(self, text: str) -> str | None:
-        for intent in ["help", "goodbye", "thanks", "compare", "trend", "change", "summary", "greeting"]:
+        for intent in ["help", "goodbye", "thanks", "chart", "compare", "trend", "change", "summary", "greeting"]:
             if any(_contains(text, k) if k.strip() == k else k in f" {text} " for k in INTENT_KEYWORDS[intent]):
                 return intent
         return None
@@ -318,6 +329,46 @@ class FinancialChatbot:
         ]
         return "\n".join(lines)
 
+    def _answer_chart(self, companies: list[str], metric: str) -> str:
+        """A text bar chart, so the visual works in any chat window, plus a pointer to the full chart."""
+        m = METRICS[metric]
+        companies = companies or list(self.companies)
+        data = self.df[self.df["Company"].isin(companies)]
+        peak = data[m["column"]].abs().max()
+        width = 30
+        lines = [f"{m['label'].capitalize()} by fiscal year (each block is about "
+                 f"{format_value(peak / width, m['kind'])}):"]
+        for company in companies:
+            lines.append(f"  {company}")
+            for _, r in data[data["Company"] == company].iterrows():
+                value = r[m["column"]]
+                bar = "█" * max(1, round(abs(value) / peak * width))
+                lines.append(f"    FY{int(r['Fiscal Year'])} {bar} {format_value(value, m['kind'])}")
+        first_last = []
+        for company in companies:
+            series = data[data["Company"] == company][m["column"]]
+            direction = "up" if series.iloc[-1] > series.iloc[0] else "down"
+            first_last.append(f"{company} {direction}")
+        lines.append(f"Reading the chart: longer bars mean higher values. Over three years: {', '.join(first_last)}.")
+        if metric in CHART_FILES:
+            lines.append(f"A full line chart of this is saved in the project at {CHART_FILES[metric]}.")
+        return "\n".join(lines)
+
+    def _suggest(self, intent: str, companies: list[str], metric: str | None) -> str:
+        """Suggest two natural next questions, to keep the conversation going."""
+        company = companies[0] if companies else "Microsoft"
+        other = next(c for c in self.companies if c != company)
+        label = METRICS[metric]["label"] if metric else "net income"
+        ideas = {
+            "value": [f"How has {company}'s {label} changed?", f"Which company has the highest {label}?"],
+            "change": [f"Show {company}'s {label} trend", f"What about {other}?"],
+            "trend": [f"Show a chart of {label}", f"How healthy is {company}?"],
+            "compare": [f"How healthy is {company}?", f"Show a chart of {label}"],
+            "summary": [f"Show {company}'s net income trend", "Which company has the highest net margin?"],
+            "chart": [f"Which company has the highest {label}?", f"How healthy is {company}?"],
+        }.get(intent)
+        return f"\n  You could also ask: \"{ideas[0]}\" or \"{ideas[1]}\"" if ideas else ""
+
     def _help(self) -> str:
         return (
             "I can answer questions about Microsoft, Tesla and Apple, using their 10-K filings "
@@ -330,6 +381,7 @@ class FinancialChatbot:
             "  - Show Microsoft's operating cash flow trend\n"
             "  - Which company has the highest net margin?\n"
             "  - How healthy is Tesla?\n"
+            "  - Show a chart of revenue\n"
             "  - What about Microsoft?  (follow-ups remember what we were discussing)\n"
             "  Note: I report figures from company filings. This is not investment advice."
         )
@@ -394,6 +446,8 @@ class FinancialChatbot:
         elif not metric:
             return ("I'm not sure which figure you mean. I can tell you about revenue, net income, assets, "
                     "liabilities, operating cash flow, net margin, leverage or equity. Type 'help' for examples.")
+        elif intent == "chart":
+            answer = self._answer_chart(companies, metric)
         elif intent in {"change", "trend"} and not companies:
             companies = list(self.companies)
             answer = "\n\n".join(self._answer_change(c, metric, year) if intent == "change"
@@ -410,7 +464,15 @@ class FinancialChatbot:
             intent = "value"
 
         self.memory = Memory(companies=companies, metric=metric, year=year, intent=intent)
+        if self.suggestions:
+            lead = self._leading_company(answer, companies)
+            answer += self._suggest(intent, [lead] if lead else companies, metric)
         return answer
+
+    def _leading_company(self, answer: str, companies: list[str]) -> str | None:
+        """For rankings, suggest a follow-up about the company that came first."""
+        match = re.search(r"\n  1\. (\w+):", answer)
+        return match.group(1) if match else (companies[0] if companies else None)
 
 
 # --------------------------------------------------------------------------
