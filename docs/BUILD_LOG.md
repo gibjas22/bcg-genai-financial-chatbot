@@ -168,6 +168,18 @@ Forage's brief makes my responsibility the **rule-based logic**, while NLP exper
 - **Data integration specialists** only need to supply the same columns from a live SEC feed; no chatbot code changes.
 - **UX designers** get a single `respond()` function that returns plain text, with suggested follow-ups and chart requests ready to become buttons and visuals.
 
+### Reflection: comparing my chatbot with BCG's example answer
+BCG's example maps two exact keys ("net income", "revenue growth") to hard-coded answers about one fictional company, using a dictionary lookup with a default reply for anything else.
+
+**What the comparison showed:**
+- **The example's own sample questions do not work with its code.** Its lookup matches the whole question exactly, so "What was the net income?" and "Tell me about revenue growth." both return the default "I'm not sure how to answer that". Only the bare words "net income" or "revenue growth" work. I ran the example to confirm this. My version 2 answers both questions, because it looks for the metric *inside* the question rather than requiring an exact match.
+- **Hard-coded answers go stale.** The example's figures are typed into the code. Mine are calculated from the 10-K dataset at the moment of asking, so updating the data updates every answer.
+- **Error handling is a shared principle.** Both return a polite default for unrecognised questions. Mine also says *why* it can't answer (no data for that company or year) and suggests what to ask instead.
+
+**What I would take from the example:**
+- **A dictionary is a cleaner way to map queries to answers than a long `if`/`elif` chain.** My version 1 follows Forage's `if`/`elif` template, but my version 2 already uses dictionaries (`METRICS`, `INTENT_KEYWORDS`) for exactly this reason.
+- **Scope.** The example is a few lines that meet the brief in a 1 to 2 hour task. I went well beyond that. In a real project I would agree the scope with Aisha first, deliver the simple version quickly, then propose the extensions, rather than building them all up front.
+
 ### Talking points
 - **How does your work fit the team?** I own the foundation. Everything the other teams build plugs into clear hand-off points rather than replacing my work.
 - **Why rule-based rather than an LLM?** For a financial client, accuracy comes first. A rule-based bot can only state verified figures. The recommended next step is an LLM layer for flexible phrasing, grounded in the same verified data (retrieval-augmented generation), so it cannot invent numbers.
