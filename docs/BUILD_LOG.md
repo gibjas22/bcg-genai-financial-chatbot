@@ -33,7 +33,9 @@ This log records each step of the project, the decisions I made and why. It is w
 
 **Companies:** Microsoft, Tesla, Apple. Three very different business models (software and cloud, electric vehicles and energy, consumer hardware and services) give the chatbot a useful range of stories to tell.
 
-**Period:** FY2022 to FY2024, the three most recent fiscal years with full 10-K filings at the time I collected the data.
+**Period:** FY2023 to FY2025, as specified in the Forage task instructions.
+
+> **Course correction.** My first version used FY2022 to FY2024, because I built it before reading the full task instructions. When the instructions specified 2023 to 2025, I extracted the FY2025 figures, dropped FY2022 and re-ran the whole analysis. The tidy data structure meant this took minutes and needed no code changes to the analysis logic, which is a practical demonstration of the scalability requirement.
 
 **Metrics chosen and why:**
 
@@ -50,8 +52,9 @@ These five cover all three core financial statements, so the chatbot can answer 
 **Process:**
 1. Located each company's 10-K on SEC EDGAR.
 2. Read the figures from the consolidated statements (US$ millions).
-3. Entered them into a tidy table: one row per company per year, one column per metric (`data/financial_data.csv`).
-4. Cross-checked figures against the companies' own investor relations releases.
+3. Compiled them into an Excel spreadsheet (`data/financial_data.xlsx`), as the task instructions specify, in a tidy layout: one row per company per year, one column per metric.
+4. Converted the spreadsheet to CSV (`data/financial_data.csv`) inside the notebook, then loaded it with pandas.
+5. Cross-checked FY2025 figures against primary sources: Tesla's Q4 2025 results exhibit filed with the SEC, Apple's FY2025 consolidated statements and Microsoft's FY2025 investor relations statements.
 
 **Decisions and judgement calls:**
 - **Different fiscal year ends.** Microsoft's year ends in June, Apple's in September and Tesla's in December. I kept a `Fiscal Year End` column so nobody mistakes these for calendar-year comparisons.
@@ -64,22 +67,26 @@ These five cover all three core financial statements, so the chatbot can answer 
 
 Notebook: `notebooks/01_financial_analysis.ipynb`
 
-1. **Data quality checks:** no missing values, three years per company, liabilities below assets in every row. Checking before analysing is a habit worth showing.
-2. **Year-on-year growth:** `groupby("Company")` with `pct_change()` so each company's growth is calculated only against its own prior year.
-3. **Ratios:**
+1. **Data quality checks:** no missing values, no duplicates, numeric data types, three years per company, liabilities below assets in every row. Checking before analysing is a habit worth showing.
+2. **Year-on-year growth:** `groupby('Company')` with `pct_change()`, using the exact column names from the task instructions (`Revenue Growth (%)`, `Net Income Growth (%)`), so each company's growth is calculated only against its own prior year.
+3. **Aggregates:** averages by company, totals by fiscal year, pivot tables, and each company's share of combined net income, to look at the data along different dimensions as the instructions suggest.
+4. **Ratios:**
    - Net profit margin (profitability)
    - Liabilities to assets (leverage)
    - Operating cash flow to net income (earnings quality)
-4. **Three-year summary:** compound annual growth rate (CAGR) plus average ratios, one comparable row per company.
-5. **Charts:** revenue, net income and net margin trends saved to `charts/`.
-6. **AI-ready preprocessing:** duplicate and data type checks, lag features (prior-year values) for time-series work, one-hot encoding of the company name, and a documented decision to keep nominal US$ figures for traceability. Exported as `data/financial_features_ml.csv`.
-7. **Deliverable report:** `docs/Task1_Data_Analysis_Report.md`, written for Aisha as requested in her briefing email: executive summary, findings by company, comparative view, a financial health verdict for each company, implications for the chatbot, and limitations.
-8. **Exports:** `data/financial_analysis.csv` for the chatbot and a four-sheet Excel workbook for business readers.
+   - Shareholders' equity (assets minus liabilities)
+5. **Three-year summary:** compound annual growth rate (CAGR) plus average ratios, one comparable row per company.
+6. **Charts:** revenue, net income, net margin and operating cash flow trends saved to `charts/`.
+7. **AI-ready preprocessing:** duplicate and data type checks, lag features (prior-year values) for time-series work, one-hot encoding of the company name, and a documented decision to keep nominal US$ figures for traceability. Exported as `data/financial_features_ml.csv`.
+8. **Findings in the notebook:** markdown cells document the methodology, observations after each step, and conclusions, as the submission instructions require.
+9. **Deliverable report:** `docs/Task1_Data_Analysis_Report.md`, written for Aisha as requested in her briefing email: executive summary, findings by company, comparative view, a financial health verdict for each company, implications for the chatbot, and limitations.
+10. **Exports:** `data/financial_analysis.csv` for the chatbot and a four-sheet Excel workbook for business readers.
+11. **Submission:** the notebook exported as HTML (`notebooks/BCG_GenAI_Task1_Gibson_Nyendwa.html`) for upload to Forage.
 
 **Headline findings:**
-- **Microsoft** has the strongest momentum: revenue up about 11% a year, net income up 21.8% in FY2024, highest margins (34 to 37%) and falling leverage.
-- **Apple** is the largest by revenue but growth is flat and margins eased slightly. High liabilities reflect its buyback and dividend programme.
-- **Tesla's** growth stalled in FY2024 (+0.9%) and net income halved, partly because FY2023 included a one-off tax benefit. Cash generation held up much better than reported profit.
+- **Microsoft** is the strongest performer: revenue up 15.3% a year, net income up 18.6% a year to $101.8bn, the highest margins (36.1% in FY2025) and falling leverage.
+- **Apple** is the largest by revenue and growth has returned (+6.4% in FY2025). Its FY2024 profit dip came from a one-time tax charge of about $10.2bn, and net income hit a record $112.0bn in FY2025.
+- **Tesla's** revenue fell 2.9% in FY2025 and net income dropped from $15.0bn to $3.8bn over two years (FY2023 was flattered by a one-off tax benefit). Operating cash flow held steady at about $14.7bn, nearly four times FY2025 profit.
 
 ---
 

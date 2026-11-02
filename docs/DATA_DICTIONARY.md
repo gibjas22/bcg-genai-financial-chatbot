@@ -6,7 +6,9 @@ How the extracted 10-K data is structured, and why it is shaped this way for the
 
 **Tidy ("long") format: one row per company per fiscal year.** Each column holds one variable and each row one observation. This lets the chatbot answer any question with a simple lookup (company + year + metric) and means new companies, years or quarterly 10-Q data are added as rows without changing any code.
 
-## `data/financial_data.csv` (raw extraction)
+## `data/financial_data.xlsx` and `data/financial_data.csv` (raw extraction)
+
+The figures were compiled manually into the Excel spreadsheet, then converted to CSV in the notebook for pandas. Both hold the same nine rows: three companies × fiscal years 2023 to 2025.
 
 | Column | Type | Unit | Source in 10-K | Description |
 |---|---|---|---|---|
@@ -25,10 +27,11 @@ All columns above, plus these derived fields:
 
 | Column | Unit | Formula | What it tells you |
 |---|---|---|---|
-| `<Metric> Growth (%)` | % | (This year ÷ last year − 1) × 100, per company | Year-on-year change. Blank for each company's first year |
+| `Revenue Growth (%)`, `Net Income Growth (%)`, `Assets Growth (%)`, `Liabilities Growth (%)`, `Operating Cash Flow Growth (%)` | % | (This year ÷ last year − 1) × 100, per company | Year-on-year change. Blank for each company's first year (FY2023) |
 | Net Margin (%) | % | Net Income ÷ Total Revenue × 100 | Profitability: profit kept from each dollar of sales |
 | Liabilities to Assets (%) | % | Total Liabilities ÷ Total Assets × 100 | Leverage: share of assets funded by liabilities |
 | OCF to Net Income (x) | ratio | Operating Cash Flow ÷ Net Income | Earnings quality: above 1.0 means profit is backed by cash |
+| Shareholders Equity | US$ millions | Total Assets − Total Liabilities | What the owners hold after all obligations (the balance sheet identity) |
 
 ## `data/financial_features_ml.csv` (machine learning ready)
 
@@ -58,6 +61,6 @@ Quarterly 10-Q filings follow the same pattern (Financial Statements, then MD&A)
 1. No missing values in any metric.
 2. No duplicate company and fiscal year rows.
 3. All metrics stored as numbers, in US$ millions.
-4. Exactly three fiscal years per company.
+4. Exactly three fiscal years per company (2023, 2024, 2025).
 5. Total Liabilities below Total Assets in every row.
 6. Every figure traceable to a named statement in Item 8 of the 10-K.
