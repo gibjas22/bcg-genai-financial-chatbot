@@ -88,6 +88,17 @@ Notebook: `notebooks/01_financial_analysis.ipynb`
 - **Apple** is the largest by revenue and growth has returned (+6.4% in FY2025). Its FY2024 profit dip came from a one-time tax charge of about $10.2bn, and net income hit a record $112.0bn in FY2025.
 - **Tesla's** revenue fell 2.9% in FY2025 and net income dropped from $15.0bn to $3.8bn over two years (FY2023 was flattered by a one-off tax benefit). Operating cash flow held steady at about $14.7bn, nearly four times FY2025 profit.
 
+### Reflection: comparing my work with BCG's example answer
+
+After submitting, Forage showed a model answer. It loads the spreadsheet, calculates revenue and net income growth with `groupby` and `pct_change`, fills missing values with `fillna(0)`, and averages growth by company.
+
+**What I did differently, and why:**
+- **I did not fill first-year growth with 0.** Each company's first year has no prior year, so its growth is genuinely unknown. Filling it with 0% adds a fake "no growth" year that drags averages down: Microsoft's average revenue growth would show about 10.2% instead of 15.3%. Leaving the cells as NaN lets pandas skip them, so the averages stay correct.
+- **I sorted by company and year before `pct_change`.** The example only works if rows happen to be in year order. Sorting first makes the calculation reliable whatever order the data arrives in.
+- **I checked data quality first** and analysed all five metrics, ratios and three-year CAGR, not just two growth rates.
+
+**What I would take from the example:** it is short and answers the question in a few lines. In a client setting, I would lead with the three headline findings and keep the detailed workings in an appendix.
+
 ---
 
 ## Step 3: Chatbot (Task 2)
