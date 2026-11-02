@@ -27,7 +27,8 @@ bcg-genai-chatbot/
 │   └── 01_financial_analysis.ipynb            # Task 1 analysis
 ├── charts/                                    # Trend charts produced by the notebook
 ├── docs/
-│   └── BUILD_LOG.md                           # Step-by-step build process and decisions
+│   ├── BUILD_LOG.md                           # Step-by-step build process and decisions
+│   └── DATA_DICTIONARY.md                     # Column definitions, formulas and data quality rules
 └── requirements.txt
 ```
 
