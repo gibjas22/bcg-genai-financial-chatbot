@@ -30,6 +30,17 @@ All columns above, plus these derived fields:
 | Liabilities to Assets (%) | % | Total Liabilities ÷ Total Assets × 100 | Leverage: share of assets funded by liabilities |
 | OCF to Net Income (x) | ratio | Operating Cash Flow ÷ Net Income | Earnings quality: above 1.0 means profit is backed by cash |
 
+## `data/financial_features_ml.csv` (machine learning ready)
+
+All columns from `financial_analysis.csv`, plus:
+
+| Column | Type | Description |
+|---|---|---|
+| `<Metric> (Prior Year)` | number | Lag feature: the same company's value for the previous fiscal year (revenue, net income, operating cash flow). Blank for the first year |
+| `Company_Apple`, `Company_Microsoft`, `Company_Tesla` | 0/1 | One-hot encoding of the company name, so models can use it as a numeric input |
+
+**Preprocessing choices:** figures stay in nominal US$ millions, as reported, to keep them traceable to the 10-K (inflation does not change any three-year trend or ranking here). Seasonality does not apply to annual data, but will once quarterly 10-Q data is added.
+
 ## Where the data and its context come from
 
 Following the SEC investor bulletin [How to Read a 10-K/10-Q](https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-bulletins/how-read):
@@ -45,6 +56,8 @@ Quarterly 10-Q filings follow the same pattern (Financial Statements, then MD&A)
 ## Data quality rules (checked in the notebook)
 
 1. No missing values in any metric.
-2. Exactly three fiscal years per company.
-3. Total Liabilities below Total Assets in every row.
-4. Every figure traceable to a named statement in Item 8 of the 10-K.
+2. No duplicate company and fiscal year rows.
+3. All metrics stored as numbers, in US$ millions.
+4. Exactly three fiscal years per company.
+5. Total Liabilities below Total Assets in every row.
+6. Every figure traceable to a named statement in Item 8 of the 10-K.

@@ -72,8 +72,9 @@ Notebook: `notebooks/01_financial_analysis.ipynb`
    - Operating cash flow to net income (earnings quality)
 4. **Three-year summary:** compound annual growth rate (CAGR) plus average ratios, one comparable row per company.
 5. **Charts:** revenue, net income and net margin trends saved to `charts/`.
-6. **Deliverable report:** `docs/Task1_Data_Analysis_Report.md`, written for Aisha as requested in her briefing email: executive summary, findings by company, comparative view, a financial health verdict for each company, implications for the chatbot, and limitations.
-7. **Exports:** `data/financial_analysis.csv` for the chatbot and a four-sheet Excel workbook for business readers.
+6. **AI-ready preprocessing:** duplicate and data type checks, lag features (prior-year values) for time-series work, one-hot encoding of the company name, and a documented decision to keep nominal US$ figures for traceability. Exported as `data/financial_features_ml.csv`.
+7. **Deliverable report:** `docs/Task1_Data_Analysis_Report.md`, written for Aisha as requested in her briefing email: executive summary, findings by company, comparative view, a financial health verdict for each company, implications for the chatbot, and limitations.
+8. **Exports:** `data/financial_analysis.csv` for the chatbot and a four-sheet Excel workbook for business readers.
 
 **Headline findings:**
 - **Microsoft** has the strongest momentum: revenue up about 11% a year, net income up 21.8% in FY2024, highest margins (34 to 37%) and falling leverage.
