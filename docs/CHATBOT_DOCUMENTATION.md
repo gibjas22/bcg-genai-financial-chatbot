@@ -57,6 +57,7 @@ Every message passes through five steps:
 | Chart | Show a chart of revenue |
 | Health summary | How healthy is Tesla? |
 | Follow-up | What about Microsoft? / And in 2024? |
+| Growth ranking | Which company grew revenue fastest? |
 | Help | help |
 
 **Metrics covered:** total revenue, net income, total assets, total liabilities, operating cash flow, net profit margin, liabilities-to-assets ratio and shareholders' equity.
@@ -84,9 +85,10 @@ pytest -q
 
 ## 4. Testing
 
-- **32 automated tests** (`tests/test_chatbot.py`), all passing. Full output: `test_results.txt`.
+- **37 automated tests** (`tests/test_chatbot.py`), all passing. Full output: `test_results.txt`.
 - The tests cover: values against the 10-K data, changes, trends, comparisons, follow-up memory, context notes, refusals, help, charts, suggestions, all five v1 predefined queries, and the web app.
 - A sample conversation is in `demo_conversation.txt`.
+- **Live stress test:** 15 new, unscripted questions on a fresh copy from GitHub. Five weaknesses were found and fixed, each with a new test: "earn" as net income, "more profitable" as margin, "grew fastest" ranking by growth rather than size, and declining investment advice.
 - **Bugs found and fixed during testing:** "over the last year" was first read as the wrong year; "least leveraged" was not recognised; an off-topic question reused the previous topic; a complete question was treated as a follow-up; trend answers repeated context notes.
 
 ---
@@ -98,7 +100,7 @@ pytest -q
 3. **Limited data.** Three companies, three annual periods and eight metrics. No quarterly data, segments, share prices or forecasts.
 4. **Context notes are hand-written** from the 10-K MD&A and results releases, and would need updating as new filings arrive.
 5. **Prototype interface.** The web app is for demonstration only: no user accounts, and conversations are held in memory.
-6. **Not investment advice.** It reports historical figures from company filings.
+6. **Not investment advice.** It reports historical figures from company filings, and declines questions such as "Should I buy Tesla shares?", offering the facts instead.
 
 ---
 

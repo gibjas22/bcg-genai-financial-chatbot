@@ -1,5 +1,5 @@
 GFC Financial Chatbot: test results
-Run on 02 November 2026 at 21:18
+Run on 02 November 2026 at 21:20
 Command: pytest -v tests
 ======================================================================
 ============================= test session starts ==============================
@@ -7,39 +7,44 @@ platform linux -- Python 3.13.18, pytest-9.1.1, pluggy-1.6.0 -- /usr/local/bin/p
 rootdir: /home/claude/bcg-genai-chatbot
 configfile: pytest.ini
 plugins: platformdirs-4.13.3, anyio-4.15.1
-collecting ... collected 32 items
+collecting ... collected 37 items
 
-tests/test_chatbot.py::test_dataset_covers_three_companies_and_three_years PASSED [  3%]
-tests/test_chatbot.py::test_formatting_in_billions PASSED                [  6%]
-tests/test_chatbot.py::test_value_answers_match_dataset[What was Apple's revenue in 2025?-$416.2bn] PASSED [  9%]
-tests/test_chatbot.py::test_value_answers_match_dataset[What was Microsoft's net income in FY2024?-$88.1bn] PASSED [ 12%]
-tests/test_chatbot.py::test_value_answers_match_dataset[Tesla total assets 2025-$137.8bn] PASSED [ 15%]
-tests/test_chatbot.py::test_value_answers_match_dataset[What are Apple's total liabilities in 2023?-$290.4bn] PASSED [ 18%]
-tests/test_chatbot.py::test_value_answers_match_dataset[Microsoft operating cash flow 2025-$136.2bn] PASSED [ 21%]
-tests/test_chatbot.py::test_value_answers_match_dataset[What is Tesla's net margin?-4.0%] PASSED [ 25%]
-tests/test_chatbot.py::test_value_answers_match_dataset[What is Microsoft's shareholders equity?-$343.5bn] PASSED [ 28%]
-tests/test_chatbot.py::test_change_over_last_year_uses_latest_year PASSED [ 31%]
-tests/test_chatbot.py::test_change_for_first_year_is_declined PASSED     [ 34%]
-tests/test_chatbot.py::test_trend_shows_all_three_years PASSED           [ 37%]
-tests/test_chatbot.py::test_highest_net_margin_is_microsoft PASSED       [ 40%]
-tests/test_chatbot.py::test_least_leveraged_is_tesla PASSED              [ 43%]
-tests/test_chatbot.py::test_largest_revenue_is_apple PASSED              [ 46%]
-tests/test_chatbot.py::test_follow_up_switches_company PASSED            [ 50%]
-tests/test_chatbot.py::test_follow_up_switches_year PASSED               [ 53%]
-tests/test_chatbot.py::test_complete_question_is_not_treated_as_follow_up PASSED [ 56%]
-tests/test_chatbot.py::test_apple_tax_charge_is_explained PASSED         [ 59%]
-tests/test_chatbot.py::test_tesla_tax_benefit_is_explained PASSED        [ 62%]
-tests/test_chatbot.py::test_unknown_company_is_declined PASSED           [ 65%]
-tests/test_chatbot.py::test_year_outside_data_is_declined PASSED         [ 68%]
-tests/test_chatbot.py::test_off_topic_question_is_not_answered PASSED    [ 71%]
-tests/test_chatbot.py::test_empty_message PASSED                         [ 75%]
-tests/test_chatbot.py::test_help_lists_examples PASSED                   [ 78%]
-tests/test_chatbot.py::test_health_summary_has_verdict PASSED            [ 81%]
-tests/test_chatbot.py::test_simple_chatbot_predefined_queries PASSED     [ 84%]
-tests/test_chatbot.py::test_chart_request_draws_text_bars PASSED         [ 87%]
-tests/test_chatbot.py::test_answers_suggest_follow_up_questions PASSED   [ 90%]
-tests/test_chatbot.py::test_suggestions_follow_the_ranking_leader PASSED [ 93%]
-tests/test_chatbot.py::test_suggestions_can_be_switched_off PASSED       [ 96%]
-tests/test_chatbot.py::test_flask_app_serves_page_and_answers PASSED     [100%]
+tests/test_chatbot.py::test_dataset_covers_three_companies_and_three_years PASSED [  2%]
+tests/test_chatbot.py::test_formatting_in_billions PASSED                [  5%]
+tests/test_chatbot.py::test_value_answers_match_dataset[What was Apple's revenue in 2025?-$416.2bn] PASSED [  8%]
+tests/test_chatbot.py::test_value_answers_match_dataset[What was Microsoft's net income in FY2024?-$88.1bn] PASSED [ 10%]
+tests/test_chatbot.py::test_value_answers_match_dataset[Tesla total assets 2025-$137.8bn] PASSED [ 13%]
+tests/test_chatbot.py::test_value_answers_match_dataset[What are Apple's total liabilities in 2023?-$290.4bn] PASSED [ 16%]
+tests/test_chatbot.py::test_value_answers_match_dataset[Microsoft operating cash flow 2025-$136.2bn] PASSED [ 18%]
+tests/test_chatbot.py::test_value_answers_match_dataset[What is Tesla's net margin?-4.0%] PASSED [ 21%]
+tests/test_chatbot.py::test_value_answers_match_dataset[What is Microsoft's shareholders equity?-$343.5bn] PASSED [ 24%]
+tests/test_chatbot.py::test_change_over_last_year_uses_latest_year PASSED [ 27%]
+tests/test_chatbot.py::test_change_for_first_year_is_declined PASSED     [ 29%]
+tests/test_chatbot.py::test_trend_shows_all_three_years PASSED           [ 32%]
+tests/test_chatbot.py::test_highest_net_margin_is_microsoft PASSED       [ 35%]
+tests/test_chatbot.py::test_least_leveraged_is_tesla PASSED              [ 37%]
+tests/test_chatbot.py::test_largest_revenue_is_apple PASSED              [ 40%]
+tests/test_chatbot.py::test_follow_up_switches_company PASSED            [ 43%]
+tests/test_chatbot.py::test_follow_up_switches_year PASSED               [ 45%]
+tests/test_chatbot.py::test_complete_question_is_not_treated_as_follow_up PASSED [ 48%]
+tests/test_chatbot.py::test_apple_tax_charge_is_explained PASSED         [ 51%]
+tests/test_chatbot.py::test_tesla_tax_benefit_is_explained PASSED        [ 54%]
+tests/test_chatbot.py::test_unknown_company_is_declined PASSED           [ 56%]
+tests/test_chatbot.py::test_year_outside_data_is_declined PASSED         [ 59%]
+tests/test_chatbot.py::test_off_topic_question_is_not_answered PASSED    [ 62%]
+tests/test_chatbot.py::test_empty_message PASSED                         [ 64%]
+tests/test_chatbot.py::test_help_lists_examples PASSED                   [ 67%]
+tests/test_chatbot.py::test_health_summary_has_verdict PASSED            [ 70%]
+tests/test_chatbot.py::test_simple_chatbot_predefined_queries PASSED     [ 72%]
+tests/test_chatbot.py::test_chart_request_draws_text_bars PASSED         [ 75%]
+tests/test_chatbot.py::test_answers_suggest_follow_up_questions PASSED   [ 78%]
+tests/test_chatbot.py::test_suggestions_follow_the_ranking_leader PASSED [ 81%]
+tests/test_chatbot.py::test_suggestions_can_be_switched_off PASSED       [ 83%]
+tests/test_chatbot.py::test_flask_app_serves_page_and_answers PASSED     [ 86%]
+tests/test_chatbot.py::test_earn_means_net_income PASSED                 [ 89%]
+tests/test_chatbot.py::test_follow_up_after_earn_question PASSED         [ 91%]
+tests/test_chatbot.py::test_more_profitable_compares_margins PASSED      [ 94%]
+tests/test_chatbot.py::test_grew_fastest_ranks_by_growth_not_size PASSED [ 97%]
+tests/test_chatbot.py::test_investment_advice_is_declined PASSED         [100%]
 
-============================== 32 passed in 0.43s ==============================
+============================== 37 passed in 0.41s ==============================

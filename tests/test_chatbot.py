@@ -182,3 +182,29 @@ def test_flask_app_serves_page_and_answers():
     assert "$416.2bn" in reply
     follow_up = client.post("/chat", json={"message": "What about Tesla?"}).get_json()["reply"]
     assert follow_up.startswith("Tesla's total revenue in FY2025 was $94.8bn")
+
+
+# ---------- stress-test fixes (unusual phrasing found in live testing) ----------
+
+def test_earn_means_net_income(bot):
+    assert "$88.1bn" in bot.respond("how much did msft earn in fy24")
+
+
+def test_follow_up_after_earn_question(bot):
+    bot.respond("how much did msft earn in fy24")
+    assert bot.respond("and tesla?").startswith("Tesla's net income in FY2024 was $7.1bn")
+
+
+def test_more_profitable_compares_margins(bot):
+    reply = bot.respond("Is Apple more profitable than Tesla?")
+    assert "Net profit margin" in reply and "1. Apple: 26.9%" in reply
+
+
+def test_grew_fastest_ranks_by_growth_not_size(bot):
+    reply = bot.respond("Which company grew revenue fastest?")
+    assert "1. Microsoft: +15.3% a year" in reply
+
+
+def test_investment_advice_is_declined(bot):
+    reply = bot.respond("Should I buy Tesla shares?")
+    assert reply.startswith("I can't give investment advice") and "Here are the facts for Tesla" in reply

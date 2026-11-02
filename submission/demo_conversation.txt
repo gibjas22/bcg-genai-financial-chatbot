@@ -92,6 +92,32 @@ Bot: Apple's net income in FY2024 was $93.7bn, which fell 3.4% on FY2023.
   Context: FY2024 included a one-time income tax charge of about $10.2bn linked to the European Commission State Aid decision. Without it, net income would have been around $104bn.
   You could also ask: "How has Apple's net income changed?" or "Which company has the highest net income?"
 
+You: Which company grew revenue fastest?
+Bot: Average annual growth in total revenue, FY2023 to FY2025 (fastest first):
+  1. Microsoft: +15.3% a year (FY2025: +14.9%)
+  2. Apple: +4.2% a year (FY2025: +6.4%)
+  3. Tesla: -1.0% a year (FY2025: -2.9%)
+Microsoft grew fastest.
+  You could also ask: "How healthy is Microsoft?" or "Show a chart of total revenue"
+
+You: Is Apple more profitable than Tesla?
+Bot: Net profit margin in FY2025 (highest first):
+  1. Apple: 26.9%
+  2. Tesla: 4.0%
+Apple has the highest net profit margin. (Net profit margin measures the share of each dollar of revenue kept as profit.)
+  You could also ask: "How healthy is Apple?" or "Show a chart of net profit margin"
+
+You: Should I buy Tesla shares?
+Bot: I can't give investment advice or comment on share prices. I report historical figures from company 10-K filings, which you may find useful alongside advice from a qualified financial adviser.
+
+Here are the facts for Tesla:
+Tesla: financial health summary (FY2023 to FY2025)
+  Verdict: Sound balance sheet but weakening profitability: revenue fell in FY2025 and net income dropped sharply, though cash flow held steady.
+  Revenue: $94.8bn in FY2025 (average change -1.0% a year).
+  Net income: $3.8bn, a net margin of 4.0%.
+  Operating cash flow: $14.7bn (3.9x net income).
+  Leverage: liabilities fund 39.9% of assets.
+
 You: What is Amazon's revenue?
 Bot: I don't have data for Amazon. I currently cover Microsoft, Tesla and Apple for FY2023 to FY2025.
 

@@ -13,7 +13,7 @@ Global Finance Corp. (GFC) needs to analyse corporate financial performance fast
 | Stage | What it covers | Status |
 |---|---|---|
 | Task 1 | Extract 10-K data and analyse trends in Python | Complete |
-| Task 2 | Build and test the financial chatbot | Complete: engine, web app, 32 tests, documentation |
+| Task 2 | Build and test the financial chatbot | Complete: engine, web app, 37 tests, documentation |
 
 ## Repository structure
 
@@ -36,7 +36,7 @@ bcg-genai-chatbot/
 │   ├── financial_chatbot.py                   # Task 2 chatbot: v1 predefined queries + v2 rule-based engine, CLI
 │   └── app.py                                 # Flask web interface
 ├── tests/
-│   └── test_chatbot.py                        # 32 automated tests (pytest)
+│   └── test_chatbot.py                        # 37 automated tests (pytest)
 ├── scripts/
 │   └── make_submission.py                     # Builds the Forage Task 2 zip
 ├── submission/

@@ -62,7 +62,7 @@ METRICS = {
     "net_income": {
         "column": "Net Income", "growth": "Net Income Growth (%)",
         "label": "net income", "kind": "money", "higher_is_better": True,
-        "keywords": ["net income", "net profit", "profit", "profits", "earnings", "bottom line"],
+        "keywords": ["net income", "net profit", "profit", "profits", "earnings", "earn", "earned", "earns", "bottom line"],
     },
     "assets": {
         "column": "Total Assets", "growth": "Assets Growth (%)",
@@ -83,7 +83,8 @@ METRICS = {
     "net_margin": {
         "column": "Net Margin (%)", "growth": None,
         "label": "net profit margin", "kind": "percent", "higher_is_better": True,
-        "keywords": ["net profit margin", "profit margin", "net margin", "margin", "margins", "profitability"],
+        "keywords": ["net profit margin", "profit margin", "net margin", "margin", "margins", "profitability",
+                     "profitable", "more profitable", "most profitable"],
         "meaning": "the share of each dollar of revenue kept as profit",
     },
     "leverage": {
@@ -127,13 +128,17 @@ HEALTH_VERDICTS = {
 }
 
 INTENT_KEYWORDS = {
+    "advice": ["should i buy", "should i sell", "should i invest", "worth buying", "worth investing",
+               "good investment", "buy shares", "sell shares", "buy the stock", "share price", "stock price",
+               "price target", "invest in", "recommend buying", "recommend selling"],
     "help": ["help", "what can you", "what can i ask", "how do i use", "examples", "options", "menu"],
     "greeting": ["hello", "hi", "hey", "good morning", "good afternoon", "good evening"],
     "thanks": ["thank", "thanks", "cheers"],
     "goodbye": ["bye", "goodbye", "exit", "quit"],
     "compare": ["compare", "comparison", "which company", "which has", "which had", "highest", "lowest",
                 "biggest", "largest", "smallest", "best", "worst", "most", "least", "rank", "versus", " vs ",
-                "who has", "who had", "all three", "all companies"],
+                "who has", "who had", "all three", "all companies", " than ", "fastest", "slowest",
+                "quickest"],
     "summary": ["summary", "summarise", "summarize", "overview", "health", "healthy", "how is", "how's", "how are",
                 "doing", "performance", "tell me about", "overall"],
     "chart": ["chart", "graph", "plot", "visual", "visualise", "visualize", "visualisation",
@@ -229,7 +234,7 @@ class FinancialChatbot:
         return None
 
     def _find_intent(self, text: str) -> str | None:
-        for intent in ["help", "goodbye", "thanks", "chart", "compare", "trend", "change", "summary", "greeting"]:
+        for intent in ["advice", "help", "goodbye", "thanks", "chart", "compare", "trend", "change", "summary", "greeting"]:
             if any(_contains(text, k) if k.strip() == k else k in f" {text} " for k in INTENT_KEYWORDS[intent]):
                 return intent
         return None
@@ -291,6 +296,30 @@ class FinancialChatbot:
         notes = next((self._note(company, metric, int(y)) for y in data["Fiscal Year"]
                       if (company, metric, int(y)) in CONTEXT_NOTES), "")
         return f"{company}'s {m['label']}: {path}. {summary}" + (notes or self._note(company, metric, None))
+
+    def _answer_growth_ranking(self, companies: list[str], metric: str, text: str) -> str:
+        """'Which company grew revenue fastest?': rank by average annual growth, not size."""
+        m = METRICS[metric]
+        companies = companies if len(companies) >= 2 else list(self.companies)
+        periods = len(self.years) - 1
+        rows = []
+        for c in companies:
+            series = self.df[self.df["Company"] == c][m["column"]]
+            cagr = ((series.iloc[-1] / series.iloc[0]) ** (1 / periods) - 1) * 100
+            latest = self._row(c, self.latest_year)[m["growth"]]
+            rows.append((c, cagr, latest))
+        slowest = any(_contains(text, w) for w in ["slowest", "least", "lowest", "worst"])
+        rows.sort(key=lambda r: r[1], reverse=not slowest)
+        lines = [f"Average annual growth in {m['label']}, FY{self.years[0]} to FY{self.latest_year} "
+                 f"({'slowest' if slowest else 'fastest'} first):"]
+        lines += [f"  {i}. {c}: {g:+.1f}% a year (FY{self.latest_year}: {l:+.1f}%)"
+                  for i, (c, g, l) in enumerate(rows, start=1)]
+        top, top_growth = rows[0][0], rows[0][1]
+        if slowest and top_growth < 0:
+            lines.append(f"{top} performed weakest: its {m['label']} shrank over the period.")
+        else:
+            lines.append(f"{top} grew {'slowest' if slowest else 'fastest'}.")
+        return "\n".join(lines)
 
     def _answer_compare(self, companies: list[str], metric: str, year: int, text: str) -> str:
         m = METRICS[metric]
@@ -401,6 +430,14 @@ class FinancialChatbot:
 
         if intent == "help":
             return self._help()
+        if intent == "advice":
+            reply = ("I can't give investment advice or comment on share prices. I report historical figures "
+                     "from company 10-K filings, which you may find useful alongside advice from a qualified "
+                     "financial adviser.")
+            if companies:
+                reply += f"\n\nHere are the facts for {companies[0]}:\n" + self._answer_summary(companies[0])
+                self.memory = Memory(companies=companies[:1], metric=None, year=self.latest_year, intent="summary")
+            return reply
         if intent == "goodbye":
             return "Goodbye! Thanks for using the GFC Financial Chatbot."
         if intent == "thanks" and not (companies or metric):
@@ -452,6 +489,9 @@ class FinancialChatbot:
             companies = list(self.companies)
             answer = "\n\n".join(self._answer_change(c, metric, year) if intent == "change"
                                   else self._answer_trend(c, metric) for c in companies)
+        elif intent == "compare" and METRICS[metric]["growth"] and any(
+                _contains(text, w) for w in ["grew", "grow", "growth", "fastest", "slowest", "quickest", "growing"]):
+            answer = self._answer_growth_ranking(companies, metric, text)
         elif intent == "compare" or (len(companies) >= 2 and intent in {None, "value"}) or not companies:
             answer = self._answer_compare(companies, metric, year, text)
             intent = "compare"
