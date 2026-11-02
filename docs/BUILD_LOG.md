@@ -137,7 +137,15 @@ A rule-based natural language understanding pipeline (`FinancialChatbot`):
 ### Demonstration
 `notebooks/02_financial_chatbot.ipynb` (exported as `BCG_GenAI_Task2_Gibson_Nyendwa.html`) walks through both versions, a sample client conversation, refusals, the help text, the test results, limitations and next steps.
 
+### My role in the wider team
+Forage's brief makes my responsibility the **rule-based logic**, while NLP experts, machine learning engineers, data integration specialists and UX designers build the other layers. I built the core so each team can extend it without rewriting it:
+- **NLP experts** can swap the keyword dictionaries for a language model; the pipeline only needs a company, year, metric and intent.
+- **ML engineers** get their training data from the questions the bot declines, plus the ML-ready feature file from Task 1.
+- **Data integration specialists** only need to supply the same columns from a live SEC feed; no chatbot code changes.
+- **UX designers** get a single `respond()` function that returns plain text, with suggested follow-ups and chart requests ready to become buttons and visuals.
+
 ### Talking points
+- **How does your work fit the team?** I own the foundation. Everything the other teams build plugs into clear hand-off points rather than replacing my work.
 - **Why rule-based rather than an LLM?** For a financial client, accuracy comes first. A rule-based bot can only state verified figures. The recommended next step is an LLM layer for flexible phrasing, grounded in the same verified data (retrieval-augmented generation), so it cannot invent numbers.
 - **Why decline rather than guess?** A confident wrong figure would damage GFC's trust with its clients. "I don't have data for that" is the safer answer.
 - **Why context notes?** "Tesla's net income fell 52.7%" without the one-off tax benefit explained could lead a client to the wrong conclusion.
