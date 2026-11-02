@@ -126,13 +126,21 @@ A rule-based natural language understanding pipeline (`FinancialChatbot`):
 **Data integration:** the bot reads `data/financial_analysis.csv` from Task 1 directly. Companies and years come from the file, so new data needs no code changes.
 
 ### Testing
-- 31 automated tests (`tests/test_chatbot.py`, run with `pytest -q`) check values against the dataset, changes, trends, comparisons, follow-ups, context notes, and that the bot declines questions it cannot answer.
+- 32 automated tests (`tests/test_chatbot.py`, run with `pytest -q`) check values against the dataset, changes, trends, comparisons, follow-ups, context notes, and that the bot declines questions it cannot answer.
 - **Bugs the tests and trial conversations caught before release:**
   - "Over the last year" was first read as FY2024 instead of the latest year.
   - "Least leveraged" was not recognised until I added "leveraged" as a keyword.
   - An off-topic question reused the previous topic instead of saying it did not understand.
   - A complete new question was wrongly treated as a follow-up.
   - Trend answers repeated context notes; now limited to one per company.
+
+### Submission (Forage requirements)
+Forage asked for 3 to 5 predefined queries with `if`/`else` logic, command-line or Flask interaction, test results and brief documentation, packaged as one zip.
+- **Predefined queries:** `simple_chatbot()` answers 5, using Forage's template exactly.
+- **Interaction:** command line (`python -m chatbot.financial_chatbot`) and a simple **Flask web app** (`python -m chatbot.app`), where each browser session keeps its own conversation memory.
+- **Test results:** 32 tests, saved to `submission/test_results.txt`, plus a recorded `demo_conversation.txt`.
+- **Documentation:** `docs/CHATBOT_DOCUMENTATION.md` covers how it works, the queries, how to run it and limitations.
+- **Packaging:** `scripts/make_submission.py` runs the tests, records the demo and builds `submission/BCG_GenAI_Task2_Gibson_Nyendwa.zip`. I unzipped it into an empty folder and confirmed the tests pass and the chatbot runs before submitting.
 
 ### Demonstration
 `notebooks/02_financial_chatbot.ipynb` (exported as `BCG_GenAI_Task2_Gibson_Nyendwa.html`) walks through both versions, a sample client conversation, refusals, the help text, the test results, limitations and next steps.
