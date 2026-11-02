@@ -44,6 +44,10 @@ All columns from `financial_analysis.csv`, plus:
 
 **Preprocessing choices:** figures stay in nominal US$ millions, as reported, to keep them traceable to the 10-K (inflation does not change any three-year trend or ranking here). Seasonality does not apply to annual data, but will once quarterly 10-Q data is added.
 
+## `data/financial_data.json` (chatbot and API ready)
+
+The same figures nested as **company → fiscal year → metric**, produced by the Task 2 notebook. Any data point can be retrieved with three keys, which suits a web or API front end. Example: `data["Tesla"]["2025"]["net income"]` returns `3794.0` (US$ millions).
+
 ## Where the data and its context come from
 
 Following the SEC investor bulletin [How to Read a 10-K/10-Q](https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-bulletins/how-read):

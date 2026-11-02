@@ -1,0 +1,98 @@
+{
+  "Apple": {
+    "2023": {
+      "total revenue": 383285.0,
+      "net income": 96995.0,
+      "total assets": 352583.0,
+      "total liabilities": 290437.0,
+      "operating cash flow": 110543.0,
+      "net profit margin": 25.31,
+      "liabilities-to-assets ratio": 82.37,
+      "shareholders' equity": 62146.0
+    },
+    "2024": {
+      "total revenue": 391035.0,
+      "net income": 93736.0,
+      "total assets": 364980.0,
+      "total liabilities": 308030.0,
+      "operating cash flow": 118254.0,
+      "net profit margin": 23.97,
+      "liabilities-to-assets ratio": 84.4,
+      "shareholders' equity": 56950.0
+    },
+    "2025": {
+      "total revenue": 416161.0,
+      "net income": 112010.0,
+      "total assets": 359241.0,
+      "total liabilities": 285508.0,
+      "operating cash flow": 111482.0,
+      "net profit margin": 26.92,
+      "liabilities-to-assets ratio": 79.48,
+      "shareholders' equity": 73733.0
+    }
+  },
+  "Microsoft": {
+    "2023": {
+      "total revenue": 211915.0,
+      "net income": 72361.0,
+      "total assets": 411976.0,
+      "total liabilities": 205753.0,
+      "operating cash flow": 87582.0,
+      "net profit margin": 34.15,
+      "liabilities-to-assets ratio": 49.94,
+      "shareholders' equity": 206223.0
+    },
+    "2024": {
+      "total revenue": 245122.0,
+      "net income": 88136.0,
+      "total assets": 512163.0,
+      "total liabilities": 243686.0,
+      "operating cash flow": 118548.0,
+      "net profit margin": 35.96,
+      "liabilities-to-assets ratio": 47.58,
+      "shareholders' equity": 268477.0
+    },
+    "2025": {
+      "total revenue": 281724.0,
+      "net income": 101832.0,
+      "total assets": 619003.0,
+      "total liabilities": 275524.0,
+      "operating cash flow": 136162.0,
+      "net profit margin": 36.15,
+      "liabilities-to-assets ratio": 44.51,
+      "shareholders' equity": 343479.0
+    }
+  },
+  "Tesla": {
+    "2023": {
+      "total revenue": 96773.0,
+      "net income": 14997.0,
+      "total assets": 106618.0,
+      "total liabilities": 43009.0,
+      "operating cash flow": 13256.0,
+      "net profit margin": 15.5,
+      "liabilities-to-assets ratio": 40.34,
+      "shareholders' equity": 63609.0
+    },
+    "2024": {
+      "total revenue": 97690.0,
+      "net income": 7091.0,
+      "total assets": 122070.0,
+      "total liabilities": 48390.0,
+      "operating cash flow": 14923.0,
+      "net profit margin": 7.26,
+      "liabilities-to-assets ratio": 39.64,
+      "shareholders' equity": 73680.0
+    },
+    "2025": {
+      "total revenue": 94827.0,
+      "net income": 3794.0,
+      "total assets": 137806.0,
+      "total liabilities": 54941.0,
+      "operating cash flow": 14747.0,
+      "net profit margin": 4.0,
+      "liabilities-to-assets ratio": 39.87,
+      "shareholders' equity": 82865.0
+    }
+  }
+}

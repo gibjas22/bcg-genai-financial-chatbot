@@ -24,6 +24,7 @@ bcg-genai-chatbot/
 │   ├── financial_data.csv                     # Raw figures extracted from 10-K filings
 │   ├── financial_analysis.csv                 # Data with growth rates and ratios (chatbot input)
 │   ├── financial_features_ml.csv              # Adds lag features and encoded company (ML ready)
+│   ├── financial_data.json                    # Company > year > metric, for web/API front ends
 │   └── BCG_GenAI_Task1_Financial_Analysis.xlsx  # Analysis workbook: raw data, growth, ratios, summary
 ├── notebooks/
 │   ├── 01_financial_analysis.ipynb            # Task 1 analysis

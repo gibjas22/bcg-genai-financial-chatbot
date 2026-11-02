@@ -7796,7 +7796,7 @@ a.anchor-link {
 <!-- End of mermaid configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 <main>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=f09e2a94">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=dfb65d8b">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7817,7 +7817,7 @@ a.anchor-link {
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=546fb497">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=b3a12586">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7827,7 +7827,7 @@ a.anchor-link {
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=e926ce3f">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=b5e49f97">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7972,22 +7972,239 @@ a.anchor-link {
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=51c61c62">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=78330873">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="2.-Version-1:-predefined-queries">2. Version 1: predefined queries<a class="anchor-link" href="#2.-Version-1:-predefined-queries">¶</a></h2><p>The simplest chatbot: each supported question is matched exactly and mapped to an answer calculated from the data. Anything else gets a polite refusal.</p>
+<h2 id="2.-Integrating-the-financial-data-with-the-chatbot">2. Integrating the financial data with the chatbot<a class="anchor-link" href="#2.-Integrating-the-financial-data-with-the-chatbot">¶</a></h2><p>Three techniques turn the static Task 1 data into answers the chatbot can retrieve on demand.</p>
+<p><strong>Data structuring.</strong> The data is stored in a tidy table, one row per company per fiscal year, in CSV (which the chatbot reads) and JSON (nested by company, then year, ready for a web or API front end). Either way, any figure can be found with just three keys: <strong>company, year and metric</strong>.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=60f7b8a7">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=47ef60c6">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
 <div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="c1"># JSON version, nested company -&gt; year -&gt; metric, for a future web or API front end</span>
+<span class="n">nested</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">company</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">'Fiscal Year'</span><span class="p">]):</span> <span class="p">{</span><span class="n">m</span><span class="p">[</span><span class="s1">'label'</span><span class="p">]:</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">m</span><span class="p">[</span><span class="s1">'column'</span><span class="p">]])</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">METRICS</span><span class="o">.</span><span class="n">values</span><span class="p">()}</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="n">company</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'Company'</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'../data/financial_data.json'</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">nested</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s1">'Tesla'</span><span class="p">:</span> <span class="p">{</span><span class="mi">2025</span><span class="p">:</span> <span class="n">nested</span><span class="p">[</span><span class="s1">'Tesla'</span><span class="p">][</span><span class="mi">2025</span><span class="p">]}},</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>{
+  "Tesla": {
+    "2025": {
+      "total revenue": 94827.0,
+      "net income": 3794.0,
+      "total assets": 137806.0,
+      "total liabilities": 54941.0,
+      "operating cash flow": 14747.0,
+      "net profit margin": 4.0,
+      "liabilities-to-assets ratio": 39.87,
+      "shareholders' equity": 82865.0
+    }
+  }
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=40228bbc">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p><strong>Predefined data points.</strong> Each kind of question is mapped to one specific column in the dataset. This mapping lives in the chatbot's <code>METRICS</code> dictionary: the words a user might type on the left, the exact data point retrieved on the right.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=1920acab">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">mapping</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">[(</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="s1">'keywords'</span><span class="p">][:</span><span class="mi">3</span><span class="p">]),</span> <span class="n">m</span><span class="p">[</span><span class="s1">'column'</span><span class="p">])</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">METRICS</span><span class="o">.</span><span class="n">values</span><span class="p">()],</span>
+    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'If the user mentions...'</span><span class="p">,</span> <span class="s1">'...the chatbot retrieves this column'</span><span class="p">])</span>
+<span class="n">mapping</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[3]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>If the user mentions...</th>
+<th>...the chatbot retrieves this column</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>total revenue, revenue, revenues</td>
+<td>Total Revenue</td>
+</tr>
+<tr>
+<th>1</th>
+<td>net income, net profit, profit</td>
+<td>Net Income</td>
+</tr>
+<tr>
+<th>2</th>
+<td>total assets, assets</td>
+<td>Total Assets</td>
+</tr>
+<tr>
+<th>3</th>
+<td>total liabilities, liabilities, debt</td>
+<td>Total Liabilities</td>
+</tr>
+<tr>
+<th>4</th>
+<td>cash flow from operating activities, operating...</td>
+<td>Cash Flow from Operating Activities</td>
+</tr>
+<tr>
+<th>5</th>
+<td>net profit margin, profit margin, net margin</td>
+<td>Net Margin (%)</td>
+</tr>
+<tr>
+<th>6</th>
+<td>liabilities to assets, debt ratio, leverage</td>
+<td>Liabilities to Assets (%)</td>
+</tr>
+<tr>
+<th>7</th>
+<td>shareholders equity, shareholders' equity, equity</td>
+<td>Shareholders Equity</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=03c4824b">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p><strong>Retrieval method.</strong> Once the company, year and metric are identified, retrieval is a simple filter on the table. This is the same lookup the chatbot uses internally.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=1a186743">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">retrieve</span><span class="p">(</span><span class="n">company</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">column</span><span class="p">):</span>
+    <span class="n">row</span> <span class="o">=</span> <span class="n">df</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="s1">'Company'</span><span class="p">]</span> <span class="o">==</span> <span class="n">company</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">'Fiscal Year'</span><span class="p">]</span> <span class="o">==</span> <span class="n">year</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">row</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># User asks: "What was Tesla's net income in 2025?"</span>
+<span class="c1"># -&gt; company = Tesla, year = 2025, metric = net income -&gt; column 'Net Income'</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Tesla, FY2025, Net Income:"</span><span class="p">,</span> <span class="n">retrieve</span><span class="p">(</span><span class="s1">'Tesla'</span><span class="p">,</span> <span class="mi">2025</span><span class="p">,</span> <span class="s1">'Net Income'</span><span class="p">),</span> <span class="s2">"(US$ millions)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Chatbot reply:"</span><span class="p">,</span> <span class="n">FinancialChatbot</span><span class="p">()</span><span class="o">.</span><span class="n">respond</span><span class="p">(</span><span class="s2">"What was Tesla's net income in 2025?"</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Tesla, FY2025, Net Income: 3794 (US$ millions)
+Chatbot reply: Tesla's net income in FY2025 was $3.8bn, which fell 46.5% on FY2024.
+  Context: Tesla linked the fall to lower vehicle deliveries and regulatory credit revenue, tariffs, and higher spending on AI and R&amp;D.
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=5a5673cb">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="3.-Version-1:-predefined-queries">3. Version 1: predefined queries<a class="anchor-link" href="#3.-Version-1:-predefined-queries">¶</a></h2><p>The simplest chatbot: each supported question is matched exactly and mapped to an answer calculated from the data. Anything else gets a polite refusal.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=a1fe348b">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">predefined</span> <span class="o">=</span> <span class="p">[</span>
@@ -8036,7 +8253,7 @@ Bot: Sorry, I can only provide information on predefined queries.
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=996db728">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=34e1eead">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8047,13 +8264,13 @@ Bot: Sorry, I can only provide information on predefined queries.
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=c8d750e3">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=f0419ede">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="3.-Version-2:-how-the-GFC-Financial-Chatbot-works">3. Version 2: how the GFC Financial Chatbot works<a class="anchor-link" href="#3.-Version-2:-how-the-GFC-Financial-Chatbot-works">¶</a></h2><p>Every message goes through a five-step pipeline:</p>
+<h2 id="4.-Version-2:-how-the-GFC-Financial-Chatbot-works">4. Version 2: how the GFC Financial Chatbot works<a class="anchor-link" href="#4.-Version-2:-how-the-GFC-Financial-Chatbot-works">¶</a></h2><p>Every message goes through a five-step pipeline:</p>
 <table>
 <thead>
 <tr>
@@ -8101,7 +8318,7 @@ Bot: Sorry, I can only provide information on predefined queries.
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=4d435d03">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=34265a82">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8136,12 +8353,12 @@ Bot: Sorry, I can only provide information on predefined queries.
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=552c8045">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=f9a88450">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"Metrics the bot understands, and some of the words people use for them:</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
@@ -8175,22 +8392,22 @@ Bot: Sorry, I can only provide information on predefined queries.
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=fe61b9e6">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=b0ca90af">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="4.-Version-2-in-action:-a-sample-conversation">4. Version 2 in action: a sample conversation<a class="anchor-link" href="#4.-Version-2-in-action:-a-sample-conversation">¶</a></h2><p>The same conversation a GFC client might have. Note the follow-up questions, which rely on the bot remembering the topic.</p>
+<h2 id="5.-Version-2-in-action:-a-sample-conversation">5. Version 2 in action: a sample conversation<a class="anchor-link" href="#5.-Version-2-in-action:-a-sample-conversation">¶</a></h2><p>The same conversation a GFC client might have. Note the follow-up questions, which rely on the bot remembering the topic.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=e2abc51f">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=4dab3522">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">bot</span> <span class="o">=</span> <span class="n">FinancialChatbot</span><span class="p">()</span>
@@ -8272,22 +8489,22 @@ Bot: Apple's net income in FY2024 was $93.7bn, which fell 3.4% on FY2023.
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=c71fc74d">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=42e575ed">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="5.-Handling-questions-it-cannot-answer">5. Handling questions it cannot answer<a class="anchor-link" href="#5.-Handling-questions-it-cannot-answer">¶</a></h2><p>For a financial tool, saying "I don't know" is far better than inventing a figure.</p>
+<h2 id="6.-Handling-questions-it-cannot-answer">6. Handling questions it cannot answer<a class="anchor-link" href="#6.-Handling-questions-it-cannot-answer">¶</a></h2><p>For a financial tool, saying "I don't know" is far better than inventing a figure.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=5d794d44">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=abe8ba33">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">bot</span> <span class="o">=</span> <span class="n">FinancialChatbot</span><span class="p">()</span>
@@ -8324,22 +8541,22 @@ Bot: FY2023 is the first year in my data, so I can't calculate a change for it. 
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=08d2b914">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=da195ec4">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="6.-Help-and-guidance-for-new-users">6. Help and guidance for new users<a class="anchor-link" href="#6.-Help-and-guidance-for-new-users">¶</a></h2>
+<h2 id="7.-Help-and-guidance-for-new-users">7. Help and guidance for new users<a class="anchor-link" href="#7.-Help-and-guidance-for-new-users">¶</a></h2>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=4e532a37">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=bc615bb1">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">FinancialChatbot</span><span class="p">()</span><span class="o">.</span><span class="n">respond</span><span class="p">(</span><span class="s2">"help"</span><span class="p">))</span>
@@ -8371,22 +8588,22 @@ Bot: FY2023 is the first year in my data, so I can't calculate a change for it. 
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=0204f164">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=d6e57060">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="7.-Testing">7. Testing<a class="anchor-link" href="#7.-Testing">¶</a></h2><p>The test suite checks that answers match the dataset, follow-ups work, one-off items are explained and out-of-scope questions are declined.</p>
+<h2 id="8.-Testing">8. Testing<a class="anchor-link" href="#8.-Testing">¶</a></h2><p>The test suite checks that answers match the dataset, follow-ups work, one-off items are explained and out-of-scope questions are declined.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=2b19b0db">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=6e1234bb">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
@@ -8405,7 +8622,7 @@ Bot: FY2023 is the first year in my data, so I can't calculate a change for it. 
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>...........................                                              [100%]
-27 passed in 0.30s
+27 passed in 0.27s
 
 </pre>
 </div>
@@ -8413,13 +8630,13 @@ Bot: FY2023 is the first year in my data, so I can't calculate a change for it. 
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=696f0387">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=29accbe4">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="8.-Limitations">8. Limitations<a class="anchor-link" href="#8.-Limitations">¶</a></h2><p>Being clear about limits is part of delivering a reliable tool:</p>
+<h2 id="9.-Limitations">9. Limitations<a class="anchor-link" href="#9.-Limitations">¶</a></h2><p>Being clear about limits is part of delivering a reliable tool:</p>
 <ol>
 <li><strong>Keyword matching, not true language understanding.</strong> Unusual phrasing, spelling mistakes or complex multi-part questions may not be understood. The bot then says so rather than guessing.</li>
 <li><strong>Limited data.</strong> Three companies, three fiscal years and eight metrics. It cannot answer questions about quarters, segments, share prices or forecasts.</li>
@@ -8427,13 +8644,13 @@ Bot: FY2023 is the first year in my data, so I can't calculate a change for it. 
 <li><strong>No forecasting or advice.</strong> The bot reports historical figures only. It is not investment advice.</li>
 <li><strong>Text interface.</strong> It runs in a notebook or terminal. A client-facing version would need a web or app front end.</li>
 </ol>
-<h2 id="9.-Next-steps-for-GFC">9. Next steps for GFC<a class="anchor-link" href="#9.-Next-steps-for-GFC">¶</a></h2><ol>
+<h2 id="10.-Next-steps-for-GFC">10. Next steps for GFC<a class="anchor-link" href="#10.-Next-steps-for-GFC">¶</a></h2><ol>
 <li><strong>Automate data ingestion</strong> from the SEC EDGAR XBRL API, so new 10-K and 10-Q filings update the bot automatically.</li>
 <li><strong>Add a large language model (LLM) layer</strong> for flexible understanding of any phrasing, with answers still grounded in the verified dataset (retrieval-augmented generation), so the model cannot invent figures.</li>
 <li><strong>Build a web interface</strong> so GFC's clients can use it without any technical knowledge.</li>
 <li><strong>Expand coverage</strong> to more companies, quarterly data and segment detail.</li>
 </ol>
-<h2 id="10.-Conclusion">10. Conclusion<a class="anchor-link" href="#10.-Conclusion">¶</a></h2><p>Version 2 meets GFC's brief: it answers in seconds rather than hours (<strong>efficiency</strong>), uses only verified 10-K data and refuses to guess (<strong>accuracy</strong>), understands everyday phrasing and explains its answers (<strong>user-friendly</strong>), and grows by adding data rather than code (<strong>scalability</strong>).</p>
+<h2 id="11.-Conclusion">11. Conclusion<a class="anchor-link" href="#11.-Conclusion">¶</a></h2><p>Version 2 meets GFC's brief: it answers in seconds rather than hours (<strong>efficiency</strong>), uses only verified 10-K data and refuses to guess (<strong>accuracy</strong>), understands everyday phrasing and explains its answers (<strong>user-friendly</strong>), and grows by adding data rather than code (<strong>scalability</strong>).</p>
 </div>
 </div>
 </div>
