@@ -27,6 +27,7 @@ bcg-genai-chatbot/
 │   └── 01_financial_analysis.ipynb            # Task 1 analysis
 ├── charts/                                    # Trend charts produced by the notebook
 ├── docs/
+│   ├── Task1_Data_Analysis_Report.md          # Task 1 deliverable: findings and financial health summary
 │   ├── BUILD_LOG.md                           # Step-by-step build process and decisions
 │   └── DATA_DICTIONARY.md                     # Column definitions, formulas and data quality rules
 └── requirements.txt
@@ -53,7 +54,7 @@ jupyter notebook notebooks/01_financial_analysis.ipynb
 - **Apple:** largest revenue base, but flat growth and slightly lower margins.
 - **Tesla:** revenue growth stalled in FY2024 and net income fell 52.7%, though operating cash flow held up.
 
-See [`docs/BUILD_LOG.md`](docs/BUILD_LOG.md) for the full build process.
+Read the full **[Task 1 Data Analysis Report](docs/Task1_Data_Analysis_Report.md)** for findings and a financial health summary, and [`docs/BUILD_LOG.md`](docs/BUILD_LOG.md) for the build process.
 
 ## Disclaimer
 
