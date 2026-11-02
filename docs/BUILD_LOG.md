@@ -6,13 +6,26 @@ This log records each step of the project, the decisions I made and why. It is w
 
 ## Step 0: Understanding the brief
 
-**Scenario.** I joined BCG's GenAI consulting team. The client wants an AI-powered chatbot that can analyse corporate financial documents and explain the results in plain, interactive language.
+**My role.** Junior data scientist in BCG's GenAI Consulting team, working under Aisha (Senior Data Scientist and team lead).
+
+**The client.** Global Finance Corp. (GFC), a leading global financial institution. Its traditional financial analysis is reliable but slow, and it struggles to keep pace with growing data volumes and fast-moving markets. GFC wants an AI-driven tool that quickly analyses and interprets 10-K and 10-Q reports, and it plans to roll the solution out in the upcoming financial quarter.
+
+**The deliverable.** An AI-powered chatbot that analyses corporate financial performance from 10-K and 10-Q filings and explains it through conversation, so that GFC's clients can get insights regardless of their financial expertise.
 
 **Two tasks:**
 1. Extract and analyse key financial data from 10-K and 10-Q filings.
-2. Use that analysis to build a financial chatbot.
+2. Use that analysis to build the financial chatbot.
 
 **How I framed it.** A chatbot is only as reliable as the data behind it. So I treated Task 1 as building a trustworthy, well-structured "single source of truth", and Task 2 as the conversational layer on top.
+
+### How the build meets GFC's requirements
+
+| GFC requirement | What it means | How this project meets it |
+|---|---|---|
+| **Efficiency** | Cut the time taken to analyse financial documents | Figures are extracted once into a structured dataset. Growth rates and ratios are calculated automatically in seconds, and the chatbot returns an answer instantly instead of an analyst reading a 100-page filing. |
+| **Accuracy** | Precise, reliable insights backed by thorough analysis | Every figure is traced to a named 10-K statement and cross-checked against company releases. The notebook runs data quality checks before any analysis. The chatbot answers only from verified data and says so when it does not know, rather than guessing. |
+| **User-friendly interface** | Intuitive for clients of any financial expertise | Plain-English questions in, plain-English answers out. Ratios come with a one-line explanation of what they mean, so a non-specialist can follow the insight. |
+| **Scalability** | Handle more documents and more queries | Tidy data format (one row per company per year) means adding a company, a year or quarterly 10-Q data is a matter of adding rows, not rewriting code. The extraction step can later be automated through the SEC EDGAR XBRL API. |
 
 ---
 

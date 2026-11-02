@@ -2,7 +2,11 @@
 
 An AI-powered financial chatbot built for the **BCG GenAI Job Simulation on Forage**. It analyses 10-K data for Microsoft, Tesla and Apple and answers financial questions in plain English.
 
-**Author:** Gibson Nyendwa
+**Author:** Gibson Nyendwa, Junior Data Scientist (simulated role), BCG GenAI Consulting team
+
+## The client problem
+
+Global Finance Corp. (GFC) needs to analyse corporate financial performance faster than its traditional methods allow. It asked BCG for an AI-powered chatbot that reads 10-K and 10-Q data and explains it conversationally, built to four requirements: **efficiency, accuracy, a user-friendly interface and scalability**. See the [build log](docs/BUILD_LOG.md#how-the-build-meets-gfcs-requirements) for how each one is met.
 
 ## Project status
 
