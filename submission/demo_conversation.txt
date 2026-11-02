@@ -1,0 +1,105 @@
+GFC Financial Chatbot: demo conversation
+======================================================================
+
+VERSION 1: predefined queries (if/else, Microsoft, latest fiscal year)
+----------------------------------------------------------------------
+You: What is the total revenue?
+Bot: Microsoft's total revenue in FY2025 was $281.7bn.
+
+You: How has net income changed over the last year?
+Bot: Microsoft's net income rose 15.5% in FY2025.
+
+You: What are the total assets?
+Bot: Microsoft's total assets were $619.0bn at the end of FY2025.
+
+You: What are the total liabilities?
+Bot: Microsoft's total liabilities were $275.5bn at the end of FY2025.
+
+You: What is the cash flow from operating activities?
+Bot: Microsoft's cash flow from operating activities in FY2025 was $136.2bn.
+
+You: What was Tesla's revenue?
+Bot: Sorry, I can only provide information on predefined queries.
+
+
+VERSION 2: FinancialChatbot (rule-based understanding with conversation memory)
+----------------------------------------------------------------------
+You: Hello
+Bot: Hello! I'm the GFC Financial Chatbot. Ask me about Microsoft, Tesla or Apple, or type 'help'.
+
+You: What was Apple's revenue in 2025?
+Bot: Apple's total revenue in FY2025 was $416.2bn, which rose 6.4% on FY2024.
+  You could also ask: "How has Apple's total revenue changed?" or "Which company has the highest total revenue?"
+
+You: How has Tesla's net income changed over the last year?
+Bot: Tesla's net income fell 46.5% in FY2025, from $7.1bn to $3.8bn.
+  Context: Tesla linked the fall to lower vehicle deliveries and regulatory credit revenue, tariffs, and higher spending on AI and R&D.
+  You could also ask: "Show Tesla's net income trend" or "What about Apple?"
+
+You: What about Microsoft?
+Bot: Microsoft's net income rose 15.5% in FY2025, from $88.1bn to $101.8bn.
+  You could also ask: "Show Microsoft's net income trend" or "What about Apple?"
+
+You: And in 2024?
+Bot: Microsoft's net income rose 21.8% in FY2024, from $72.4bn to $88.1bn.
+  You could also ask: "Show Microsoft's net income trend" or "What about Apple?"
+
+You: Which company has the highest net margin?
+Bot: Net profit margin in FY2025 (highest first):
+  1. Microsoft: 36.1%
+  2. Apple: 26.9%
+  3. Tesla: 4.0%
+Microsoft has the highest net profit margin. (Net profit margin measures the share of each dollar of revenue kept as profit.)
+  You could also ask: "How healthy is Microsoft?" or "Show a chart of net profit margin"
+
+You: Which company is least leveraged?
+Bot: Liabilities-to-assets ratio in FY2025 (lowest first):
+  1. Tesla: 39.9%
+  2. Microsoft: 44.5%
+  3. Apple: 79.5%
+Tesla has the lowest liabilities-to-assets ratio. (Liabilities-to-assets ratio measures the share of the company's assets funded by liabilities; lower means less leveraged.)
+  You could also ask: "How healthy is Tesla?" or "Show a chart of liabilities-to-assets ratio"
+
+You: Show a chart of revenue
+Bot: Total revenue by fiscal year (each block is about $13.9bn):
+  Apple
+    FY2023 ████████████████████████████ $383.3bn
+    FY2024 ████████████████████████████ $391.0bn
+    FY2025 ██████████████████████████████ $416.2bn
+  Microsoft
+    FY2023 ███████████████ $211.9bn
+    FY2024 ██████████████████ $245.1bn
+    FY2025 ████████████████████ $281.7bn
+  Tesla
+    FY2023 ███████ $96.8bn
+    FY2024 ███████ $97.7bn
+    FY2025 ███████ $94.8bn
+Reading the chart: longer bars mean higher values. Over three years: Apple up, Microsoft up, Tesla down.
+A full line chart of this is saved in the project at charts/revenue_trend.png.
+  You could also ask: "Which company has the highest total revenue?" or "How healthy is Microsoft?"
+
+You: How healthy is Tesla?
+Bot: Tesla: financial health summary (FY2023 to FY2025)
+  Verdict: Sound balance sheet but weakening profitability: revenue fell in FY2025 and net income dropped sharply, though cash flow held steady.
+  Revenue: $94.8bn in FY2025 (average change -1.0% a year).
+  Net income: $3.8bn, a net margin of 4.0%.
+  Operating cash flow: $14.7bn (3.9x net income).
+  Leverage: liabilities fund 39.9% of assets.
+  You could also ask: "Show Tesla's net income trend" or "Which company has the highest net margin?"
+
+You: Apple net income 2024
+Bot: Apple's net income in FY2024 was $93.7bn, which fell 3.4% on FY2023.
+  Context: FY2024 included a one-time income tax charge of about $10.2bn linked to the European Commission State Aid decision. Without it, net income would have been around $104bn.
+  You could also ask: "How has Apple's net income changed?" or "Which company has the highest net income?"
+
+You: What is Amazon's revenue?
+Bot: I don't have data for Amazon. I currently cover Microsoft, Tesla and Apple for FY2023 to FY2025.
+
+You: What was Microsoft's revenue in 2019?
+Bot: My data covers FY2023 to FY2025, so I can't answer for 2019. I won't guess figures I haven't verified.
+
+You: What is the weather today?
+Bot: Sorry, I didn't understand that. I answer questions about the financial performance of Microsoft, Tesla and Apple. Type 'help' for examples.
+
+You: bye
+Bot: Goodbye! Thanks for using the GFC Financial Chatbot.

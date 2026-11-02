@@ -170,3 +170,15 @@ def test_suggestions_follow_the_ranking_leader(bot):
 def test_suggestions_can_be_switched_off():
     quiet = FinancialChatbot(suggestions=False)
     assert "You could also ask" not in quiet.respond("What was Apple's revenue in 2025?")
+
+
+# ---------- Flask web app ----------
+
+def test_flask_app_serves_page_and_answers():
+    from chatbot.app import app
+    client = app.test_client()
+    assert b"GFC Financial Chatbot" in client.get("/").data
+    reply = client.post("/chat", json={"message": "What was Apple's revenue in 2025?"}).get_json()["reply"]
+    assert "$416.2bn" in reply
+    follow_up = client.post("/chat", json={"message": "What about Tesla?"}).get_json()["reply"]
+    assert follow_up.startswith("Tesla's total revenue in FY2025 was $94.8bn")

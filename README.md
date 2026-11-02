@@ -13,7 +13,7 @@ Global Finance Corp. (GFC) needs to analyse corporate financial performance fast
 | Stage | What it covers | Status |
 |---|---|---|
 | Task 1 | Extract 10-K data and analyse trends in Python | Complete |
-| Task 2 | Build and test the financial chatbot | Complete: engine, 31 tests, demo notebook |
+| Task 2 | Build and test the financial chatbot | Complete: engine, web app, 32 tests, documentation |
 
 ## Repository structure
 
@@ -33,11 +33,19 @@ bcg-genai-chatbot/
 │   └── BCG_GenAI_Task2_Gibson_Nyendwa.html    # Task 2 notebook exported for Forage submission
 ├── charts/                                    # Trend charts produced by the notebook
 ├── chatbot/
-│   └── financial_chatbot.py                   # Task 2 chatbot: v1 predefined queries + v2 NLP engine, CLI
+│   ├── financial_chatbot.py                   # Task 2 chatbot: v1 predefined queries + v2 rule-based engine, CLI
+│   └── app.py                                 # Flask web interface
 ├── tests/
-│   └── test_chatbot.py                        # 31 automated accuracy tests (pytest)
+│   └── test_chatbot.py                        # 32 automated tests (pytest)
+├── scripts/
+│   └── make_submission.py                     # Builds the Forage Task 2 zip
+├── submission/
+│   ├── BCG_GenAI_Task2_Gibson_Nyendwa.zip     # Task 2 submission: script, tests, results, docs
+│   ├── test_results.txt                       # Latest test run
+│   └── demo_conversation.txt                  # Sample conversation
 ├── docs/
 │   ├── Task1_Data_Analysis_Report.md          # Task 1 deliverable: findings and financial health summary
+│   ├── CHATBOT_DOCUMENTATION.md               # Task 2 deliverable: how it works, queries, limitations
 │   ├── BUILD_LOG.md                           # Step-by-step build process and decisions
 │   └── DATA_DICTIONARY.md                     # Column definitions, formulas and data quality rules
 └── requirements.txt
@@ -59,6 +67,9 @@ pip install -r requirements.txt
 # Chat with the bot in your terminal
 python -m chatbot.financial_chatbot
 
+# Or in your browser (then open http://127.0.0.1:5000)
+python -m chatbot.app
+
 # Run the tests
 pytest -q
 
@@ -67,6 +78,8 @@ jupyter notebook notebooks/
 ```
 
 ## Example conversation
+
+<img src="docs/images/web_app.png" alt="GFC Financial Chatbot web app" width="360">
 
 ```
 You: How has Tesla's net income changed over the last year?
