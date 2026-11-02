@@ -35,10 +35,16 @@ bcg-genai-chatbot/
 ├── chatbot/
 │   ├── financial_chatbot.py                   # Task 2 chatbot: v1 predefined queries + v2 rule-based engine, CLI
 │   └── app.py                                 # Flask web interface
+├── web/
+│   ├── chatbot.js                             # Browser copy of the chatbot (verified identical)
+│   ├── template.html                          # Test page layout
+│   └── gfc_chatbot_demo.html                  # Built test page: chat + 13-check test list
 ├── tests/
 │   └── test_chatbot.py                        # 37 automated tests (pytest)
 ├── scripts/
-│   └── make_submission.py                     # Builds the Forage Task 2 zip
+│   ├── make_submission.py                     # Builds the Forage Task 2 zip
+│   ├── build_web_demo.py                      # Builds the browser test page from the Python code
+│   └── parity_test.py                         # Proves browser and Python answers are identical
 ├── submission/
 │   ├── BCG_GenAI_Task2_Gibson_Nyendwa.zip     # Task 2 submission: script, tests, results, docs
 │   ├── test_results.txt                       # Latest test run
@@ -58,6 +64,36 @@ bcg-genai-chatbot/
 - **Years:** FY2023 to FY2025
 - **Metrics:** Total Revenue, Net Income, Total Assets, Total Liabilities, Cash Flow from Operating Activities
 - **Units:** US$ millions
+
+## Test the chatbot
+
+There are three ways to check it works, from easiest to most technical.
+
+### 1. In your browser (no install)
+Open `web/gfc_chatbot_demo.html` in any browser, or the hosted version of the same page. Chat with the bot on the left, and press **Run all checks** on the right: 13 checks covering values, changes, follow-ups, comparisons, growth rankings, charts, context notes and refusals. **13 / 13 means it is working.**
+
+The web page runs a JavaScript copy of the Python chatbot. `python scripts/parity_test.py` proves both give identical answers to 1,704 questions (requires Node.js).
+
+### 2. In GitHub Codespaces (real Python, no install)
+On this repo, click **Code → Codespaces → Create codespace on main**. When the terminal opens:
+```bash
+pytest -q                          # expect: 37 passed
+python -m chatbot.financial_chatbot  # chat in the terminal
+python -m chatbot.app              # web app; Codespaces opens a preview link
+```
+
+### 3. On your own computer
+Needs Python 3.10 or later, then follow **Run it yourself** below.
+
+### What "working" looks like
+| Ask | Expected answer contains |
+|---|---|
+| What was Apple's revenue in 2025? | $416.2bn |
+| How has Tesla's net income changed over the last year? | fell 46.5% |
+| What about Microsoft? (straight after) | Microsoft's net income rose 15.5% |
+| Which company grew revenue fastest? | 1. Microsoft: +15.3% a year |
+| Should I buy Tesla shares? | can't give investment advice |
+| What is Amazon's revenue? | I don't have data for Amazon |
 
 ## Run it yourself
 

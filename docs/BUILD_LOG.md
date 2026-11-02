@@ -144,6 +144,12 @@ I cloned a fresh copy from GitHub, confirmed all tests passed, then typed 15 new
 
 **Lesson:** automated tests check what you thought of; real phrasing finds what you didn't. Both are needed.
 
+### Browser test page
+To let anyone test the chatbot without installing Python, I ported the engine to JavaScript (`web/chatbot.js`) and built a test page (`web/gfc_chatbot_demo.html`) with the chat beside a 13-check test list and a "Run all checks" button.
+- **No drift between versions:** `scripts/build_web_demo.py` exports the keyword dictionaries, context notes and data directly from the Python code, so the knowledge is never retyped.
+- **Proof of parity:** `scripts/parity_test.py` runs 1,704 questions (1,675 single questions and 5 multi-turn conversations) through both versions. All 1,704 answers are identical.
+- **Codespaces:** `.devcontainer/` lets anyone run the real Python version in a browser from GitHub.
+
 ### Submission (Forage requirements)
 Forage asked for 3 to 5 predefined queries with `if`/`else` logic, command-line or Flask interaction, test results and brief documentation, packaged as one zip.
 - **Predefined queries:** `simple_chatbot()` answers 5, using Forage's template exactly.

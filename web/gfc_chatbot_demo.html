@@ -1,0 +1,531 @@
+<title>GFC Financial Chatbot</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: analyst workbench. Chat console (left) beside a verification checklist (right); stacks on phones. */
+:root {
+  --paper: #f3f5f2;
+  --panel: #ffffff;
+  --ink: #17231d;
+  --muted: #5b6a62;
+  --line: #d9e0db;
+  --accent: #1d6b4f;
+  --accent-soft: #e2efe8;
+  --user: #e8eef9;
+  --user-ink: #1d2b47;
+  --pass: #1f7a4a;
+  --pass-soft: #dff2e6;
+  --fail: #b3261e;
+  --fail-soft: #fbe3e1;
+  --idle: #8a958f;
+  --font-display: "IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Consolas, "Courier New", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0f1512; --panel: #161e1a; --ink: #e3ebe6; --muted: #98a89f; --line: #2a3530;
+    --accent: #5cc493; --accent-soft: #1b2e25; --user: #1d2638; --user-ink: #d6e0f5;
+    --pass: #6ad49b; --pass-soft: #163024; --fail: #f08a82; --fail-soft: #3a1d1b; --idle: #6f7b75;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0f1512; --panel: #161e1a; --ink: #e3ebe6; --muted: #98a89f; --line: #2a3530;
+  --accent: #5cc493; --accent-soft: #1b2e25; --user: #1d2638; --user-ink: #d6e0f5;
+  --pass: #6ad49b; --pass-soft: #163024; --fail: #f08a82; --fail-soft: #3a1d1b; --idle: #6f7b75;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 28px;
+}
+.wrap { max-width: 1180px; margin: 0 auto; display: grid; gap: 18px; }
+header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 8px 24px; border-bottom: 2px solid var(--ink); padding-bottom: 12px; }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.6rem, 3.6vw, 2.2rem); letter-spacing: -0.01em; margin: 0; line-height: 1.1; text-wrap: balance; }
+.sub { margin: 4px 0 0; color: var(--muted); font-size: 0.92rem; }
+.coverage { display: flex; gap: 6px; flex-wrap: wrap; }
+.tag { font-family: var(--font-mono); font-size: 0.75rem; border: 1px solid var(--line); border-radius: 4px; padding: 3px 7px; color: var(--muted); background: var(--panel); }
+.grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+@media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+section { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; min-width: 0; }
+.sec-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 1.1rem; margin: 0; letter-spacing: 0.01em; }
+.eyebrow { font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+/* Chat */
+#log { height: 470px; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.msg { max-width: 94%; border-radius: 10px; padding: 9px 12px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.msg.user { align-self: flex-end; background: var(--user); color: var(--user-ink); }
+.msg.bot { align-self: flex-start; background: var(--accent-soft); font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.55; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 10px; }
+.chip { font: inherit; font-size: 0.8rem; border: 1px solid var(--accent); color: var(--accent); background: transparent; border-radius: 999px; padding: 4px 10px; cursor: pointer; }
+.chip:hover { background: var(--accent-soft); }
+form { display: flex; gap: 8px; padding: 12px 16px 16px; border-top: 1px solid var(--line); }
+#q { flex: 1; min-width: 0; font: inherit; padding: 10px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); color: var(--ink); }
+button.primary { font: inherit; font-weight: 600; background: var(--accent); color: var(--panel); border: 0; border-radius: 6px; padding: 0 16px; cursor: pointer; min-height: 42px; }
+button.ghost { font: inherit; font-size: 0.85rem; background: transparent; color: var(--muted); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+button:focus-visible, .chip:focus-visible, #q:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* Checklist */
+.score { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.score-num { font-family: var(--font-display); font-weight: 600; font-size: 1.6rem; font-variant-numeric: tabular-nums; }
+.score-text { color: var(--muted); font-size: 0.85rem; flex: 1; min-width: 140px; }
+ol.checks { list-style: none; margin: 0; padding: 0; }
+.check { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; padding: 11px 16px; border-bottom: 1px solid var(--line); align-items: start; }
+.check:last-child { border-bottom: 0; }
+.check .what { font-size: 0.78rem; color: var(--muted); }
+.check .q { font-weight: 500; font-size: 0.92rem; }
+.check .expect { font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted); grid-column: 1 / -1; }
+.check .expect b { color: var(--ink); font-weight: 500; }
+.status { font-family: var(--font-mono); font-size: 0.72rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; border-radius: 4px; padding: 3px 7px; white-space: nowrap; color: var(--idle); border: 1px solid var(--line); }
+.status.pass { color: var(--pass); background: var(--pass-soft); border-color: transparent; }
+.status.fail { color: var(--fail); background: var(--fail-soft); border-color: transparent; }
+.check button.ask { justify-self: start; grid-column: 1 / -1; }
+.note { color: var(--muted); font-size: 0.82rem; margin: 0; padding: 12px 16px; border-top: 1px solid var(--line); }
+footer { color: var(--muted); font-size: 0.8rem; }
+@media (prefers-reduced-motion: no-preference) { #log { scroll-behavior: smooth; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>GFC Financial Chatbot</h1>
+      <p class="sub">Ask about Microsoft, Tesla and Apple. Every answer comes from their 10-K filings.</p>
+    </div>
+    <div class="coverage" aria-label="Data coverage">
+      <span class="tag">FY2023 to FY2025</span><span class="tag">US$, 10-K Item 8</span><span class="tag">3 companies · 8 metrics</span>
+    </div>
+  </header>
+
+  <div class="grid">
+    <section aria-labelledby="chat-h">
+      <div class="sec-head">
+        <div><div class="eyebrow">Try it</div><h2 id="chat-h">Chat</h2></div>
+        <button class="ghost" id="reset" type="button">Start new conversation</button>
+      </div>
+      <div id="log" aria-live="polite"></div>
+      <div class="chips" id="chips"></div>
+      <form id="f">
+        <label for="q" class="eyebrow" hidden>Your question</label>
+        <input id="q" autocomplete="off" placeholder="e.g. How healthy is Tesla?">
+        <button class="primary" type="submit">Ask</button>
+      </form>
+    </section>
+
+    <section aria-labelledby="check-h">
+      <div class="sec-head">
+        <div><div class="eyebrow">Check it</div><h2 id="check-h">Test checklist</h2></div>
+        <button class="primary" id="runall" type="button">Run all checks</button>
+      </div>
+      <div class="score">
+        <span class="score-num" id="score">0 / 0</span>
+        <span class="score-text" id="score-text">Press "Run all checks", or tap "Ask this" on any check to see it in the chat.</span>
+      </div>
+      <ol class="checks" id="checks"></ol>
+      <p class="note">Each check asks the question and confirms the reply contains the expected text, taken from the 10-K figures. A pass means the chatbot found the right data and phrased it correctly.</p>
+    </section>
+  </div>
+
+  <footer>Prototype for the BCG GenAI Job Simulation (Forage) by Gibson Nyendwa. Same logic as the Python chatbot, verified answer-for-answer. Not investment advice.</footer>
+</div>
+
+<script>
+/*
+ * GFC Financial Chatbot: browser version.
+ * A line-for-line port of chatbot/financial_chatbot.py (FinancialChatbot), so the
+ * web demo behaves exactly like the Python chatbot. The keyword dictionaries,
+ * context notes and data are exported from the Python code by
+ * scripts/build_web_demo.py, and scripts/parity_test.py checks that both
+ * versions give identical answers.
+ */
+(function (root) {
+  "use strict";
+
+  function escapeRe(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+
+  function contains(text, phrase) {
+    phrase = phrase.trim();
+    return new RegExp("(?<![a-z0-9])" + escapeRe(phrase) + "(?![a-z0-9])").test(text);
+  }
+
+  function fixed(x, d) { return Number(x).toFixed(d); }
+  function signed(x, d) { const v = Number(x).toFixed(d); return (Number(x) >= 0 && !v.startsWith("-") ? "+" : "") + v; }
+  function commas(x, d) {
+    const [i, f] = Math.abs(Number(x)).toFixed(d).split(".");
+    const s = i.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return (Number(x) < 0 ? "-" : "") + s + (f ? "." + f : "");
+  }
+  function formatMoney(millions) {
+    if (Math.abs(millions) >= 1000) return "$" + commas(millions / 1000, 1) + "bn";
+    return "$" + commas(millions, 0) + "m";
+  }
+  function formatValue(v, kind) { return kind === "money" ? formatMoney(v) : fixed(v, 1) + "%"; }
+  function describeChange(pct) {
+    if (Math.abs(pct) < 0.05) return "was unchanged";
+    return (pct > 0 ? "rose" : "fell") + " " + fixed(Math.abs(pct), 1) + "%";
+  }
+  function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase(); }
+  function title(s) { return s.replace(/\b\w/g, c => c.toUpperCase()); }
+  function bankersRound(x) {
+    const f = Math.floor(x), diff = x - f;
+    if (diff > 0.5) return f + 1;
+    if (diff < 0.5) return f;
+    return f % 2 === 0 ? f : f + 1;
+  }
+  function cagr(first, last, periods) { return (Math.pow(last / first, 1 / periods) - 1) * 100; }
+
+  class FinancialChatbot {
+    constructor(K, rows, suggestions = true) {
+      this.K = K;
+      this.suggestions = suggestions;
+      this.df = rows.slice().sort((a, b) =>
+        a["Company"] < b["Company"] ? -1 : a["Company"] > b["Company"] ? 1 : a["Fiscal Year"] - b["Fiscal Year"]);
+      this.companies = [...new Set(this.df.map(r => r["Company"]))].sort();
+      this.years = [...new Set(this.df.map(r => r["Fiscal Year"]))].sort((a, b) => a - b);
+      this.latestYear = this.years[this.years.length - 1];
+      this.memory = { companies: [], metric: null, year: null, intent: null };
+    }
+
+    // ---------------- understanding the question ----------------
+    findCompanies(text) {
+      let found = Object.entries(this.K.COMPANY_ALIASES)
+        .filter(([name, aliases]) => this.companies.includes(name) && aliases.some(a => contains(text, a)))
+        .map(([name]) => name);
+      if (!found.length && ["all three", "all companies", "each company", "every company"].some(p => contains(text, p)))
+        found = this.companies.slice();
+      return found;
+    }
+    findOutOfScope(text) {
+      for (const name of this.K.OUT_OF_SCOPE_COMPANIES)
+        if (contains(text, name)) return (name === "ibm" || name === "byd") ? name.toUpperCase() : title(name);
+      return null;
+    }
+    findMetric(text) {
+      let best = null;
+      for (const [key, m] of Object.entries(this.K.METRICS))
+        for (const k of m.keywords)
+          if (contains(text, k)) {
+            const cand = [k.length, key];
+            if (!best || cand[0] > best[0] || (cand[0] === best[0] && cand[1] > best[1])) best = cand;
+          }
+      return best ? best[1] : null;
+    }
+    findYear(text) {
+      const m = text.match(/\b(?:fy\s?)?(20\d{2})\b/) || text.match(/\bfy\s?(\d{2})\b/);
+      if (m) {
+        let year = parseInt(m[1], 10);
+        if (year < 100) year += 2000;
+        return this.years.includes(year) ? year : "out_of_range:" + year;
+      }
+      if (["latest", "most recent", "this year", "current", "recent", "now", "last year", "past year",
+           "last fiscal year"].some(p => contains(text, p))) return this.latestYear;
+      if (["previous year", "prior year", "year before"].some(p => contains(text, p))) return this.latestYear - 1;
+      return null;
+    }
+    findIntent(text) {
+      for (const intent of ["advice", "help", "goodbye", "thanks", "chart", "compare", "trend", "change", "summary", "greeting"])
+        if (this.K.INTENT_KEYWORDS[intent].some(k => k.trim() === k ? contains(text, k) : (" " + text + " ").includes(k)))
+          return intent;
+      return null;
+    }
+
+    // ---------------- data ----------------
+    row(company, year) { return this.df.find(r => r["Company"] === company && r["Fiscal Year"] === year); }
+    series(company, column) { return this.df.filter(r => r["Company"] === company).map(r => r[column]); }
+    noteKey(company, metric, year) { return company + "|" + metric + "|" + (year === null ? "None" : year); }
+    note(company, metric, year) {
+      const n = this.K.CONTEXT_NOTES[this.noteKey(company, metric, year)] || this.K.CONTEXT_NOTES[this.noteKey(company, metric, null)];
+      return n ? "\n  Context: " + n : "";
+    }
+
+    // ---------------- answers ----------------
+    answerValue(company, metric, year) {
+      const m = this.K.METRICS[metric], r = this.row(company, year);
+      const verb = m.label.startsWith("total") && m.label.endsWith("s") ? "were" : "was";
+      let t = `${company}'s ${m.label} in FY${year} ${verb} ${formatValue(r[m.column], m.kind)}`;
+      if (m.growth && r[m.growth] !== null && r[m.growth] !== undefined)
+        t += `, which ${describeChange(r[m.growth])} on FY${year - 1}`;
+      t += ".";
+      if (m.meaning) t += ` This measures ${m.meaning}.`;
+      return t + this.note(company, metric, year);
+    }
+    answerChange(company, metric, year) {
+      const m = this.K.METRICS[metric];
+      if (year === this.years[0])
+        return `FY${year} is the first year in my data, so I can't calculate a change for it. ` +
+               `Try asking about FY${year + 1} or FY${this.latestYear}.`;
+      const nw = this.row(company, year)[m.column], old = this.row(company, year - 1)[m.column];
+      let t;
+      if (m.kind === "percent") {
+        const diff = nw - old;
+        t = `${company}'s ${m.label} ${diff > 0 ? "rose" : "fell"} from ${fixed(old, 1)}% in FY${year - 1} ` +
+            `to ${fixed(nw, 1)}% in FY${year}, a change of ${signed(diff, 1)} percentage points.`;
+      } else {
+        const pct = (nw / old - 1) * 100;
+        t = `${company}'s ${m.label} ${describeChange(pct)} in FY${year}, from ${formatMoney(old)} to ${formatMoney(nw)}.`;
+      }
+      return t + this.note(company, metric, year);
+    }
+    answerTrend(company, metric) {
+      const m = this.K.METRICS[metric];
+      const data = this.df.filter(r => r["Company"] === company);
+      const path = data.map(r => `FY${r["Fiscal Year"]} ${formatValue(r[m.column], m.kind)}`).join(" → ");
+      const first = data[0][m.column], last = data[data.length - 1][m.column];
+      const summary = m.kind === "money"
+        ? `That is an average change of ${signed(cagr(first, last, data.length - 1), 1)}% a year.`
+        : `Overall, a change of ${signed(last - first, 1)} percentage points.`;
+      let notes = "";
+      for (const r of data)
+        if (this.K.CONTEXT_NOTES[this.noteKey(company, metric, r["Fiscal Year"])] !== undefined) {
+          notes = this.note(company, metric, r["Fiscal Year"]); break;
+        }
+      return `${company}'s ${m.label}: ${path}. ${summary}` + (notes || this.note(company, metric, null));
+    }
+    answerGrowthRanking(companies, metric, text) {
+      const m = this.K.METRICS[metric];
+      companies = companies.length >= 2 ? companies : this.companies.slice();
+      const periods = this.years.length - 1;
+      const rows = companies.map(c => {
+        const s = this.series(c, m.column);
+        return [c, cagr(s[0], s[s.length - 1], periods), this.row(c, this.latestYear)[m.growth]];
+      });
+      const slowest = ["slowest", "least", "lowest", "worst"].some(w => contains(text, w));
+      rows.sort((a, b) => slowest ? a[1] - b[1] : b[1] - a[1]);
+      const lines = [`Average annual growth in ${m.label}, FY${this.years[0]} to FY${this.latestYear} ` +
+                     `(${slowest ? "slowest" : "fastest"} first):`];
+      rows.forEach(([c, g, l], i) => lines.push(`  ${i + 1}. ${c}: ${signed(g, 1)}% a year (FY${this.latestYear}: ${signed(l, 1)}%)`));
+      if (slowest && rows[0][1] < 0) lines.push(`${rows[0][0]} performed weakest: its ${m.label} shrank over the period.`);
+      else lines.push(`${rows[0][0]} grew ${slowest ? "slowest" : "fastest"}.`);
+      return lines.join("\n");
+    }
+    answerCompare(companies, metric, year, text) {
+      const m = this.K.METRICS[metric];
+      companies = companies.length >= 2 ? companies : this.companies.slice();
+      const data = this.df.filter(r => r["Fiscal Year"] === year && companies.includes(r["Company"]));
+      const wantsLow = ["lowest", "smallest", "least", "worst"].some(w => contains(text, w));
+      const ascending = m.higher_is_better ? wantsLow : !["highest", "most", "largest", "biggest"].some(w => contains(text, w));
+      const ranked = data.slice().sort((a, b) => ascending ? a[m.column] - b[m.column] : b[m.column] - a[m.column]);
+      const lines = ranked.map((r, i) => `  ${i + 1}. ${r["Company"]}: ${formatValue(r[m.column], m.kind)}`);
+      const lead = ranked[0]["Company"];
+      const header = `${capitalize(m.label)} in FY${year} (${ascending ? "lowest first" : "highest first"}):`;
+      let footer = `${lead} has the ${ascending ? "lowest" : "highest"} ${m.label}.`;
+      if (m.meaning) footer += ` (${capitalize(m.label)} measures ${m.meaning}.)`;
+      else if (!m.higher_is_better) footer += ` For ${m.label}, lower generally means a stronger position.`;
+      return [header, ...lines, footer].join("\n");
+    }
+    answerSummary(company) {
+      const L = this.row(company, this.latestYear), F = this.row(company, this.years[0]);
+      const rc = cagr(F["Total Revenue"], L["Total Revenue"], this.years.length - 1);
+      return [
+        `${company}: financial health summary (FY${this.years[0]} to FY${this.latestYear})`,
+        `  Verdict: ${this.K.HEALTH_VERDICTS[company] || "See the figures below."}`,
+        `  Revenue: ${formatMoney(L["Total Revenue"])} in FY${this.latestYear} (average change ${signed(rc, 1)}% a year).`,
+        `  Net income: ${formatMoney(L["Net Income"])}, a net margin of ${fixed(L["Net Margin (%)"], 1)}%.`,
+        `  Operating cash flow: ${formatMoney(L["Cash Flow from Operating Activities"])} (${fixed(L["OCF to Net Income (x)"], 1)}x net income).`,
+        `  Leverage: liabilities fund ${fixed(L["Liabilities to Assets (%)"], 1)}% of assets.`,
+      ].join("\n");
+    }
+    answerChart(companies, metric) {
+      const m = this.K.METRICS[metric];
+      companies = companies.length ? companies : this.companies.slice();
+      const data = this.df.filter(r => companies.includes(r["Company"]));
+      const peak = Math.max(...data.map(r => Math.abs(r[m.column])));
+      const width = 30;
+      const lines = [`${capitalize(m.label)} by fiscal year (each block is about ${formatValue(peak / width, m.kind)}):`];
+      for (const c of companies) {
+        lines.push(`  ${c}`);
+        for (const r of data.filter(r => r["Company"] === c)) {
+          const v = r[m.column];
+          lines.push(`    FY${r["Fiscal Year"]} ${"█".repeat(Math.max(1, bankersRound(Math.abs(v) / peak * width)))} ${formatValue(v, m.kind)}`);
+        }
+      }
+      const dirs = companies.map(c => {
+        const s = data.filter(r => r["Company"] === c).map(r => r[m.column]);
+        return `${c} ${s[s.length - 1] > s[0] ? "up" : "down"}`;
+      });
+      lines.push(`Reading the chart: longer bars mean higher values. Over three years: ${dirs.join(", ")}.`);
+      if (this.K.CHART_FILES[metric]) lines.push(`A full line chart of this is saved in the project at ${this.K.CHART_FILES[metric]}.`);
+      return lines.join("\n");
+    }
+    suggest(intent, companies, metric) {
+      const company = companies.length ? companies[0] : "Microsoft";
+      const other = this.companies.find(c => c !== company);
+      const label = metric ? this.K.METRICS[metric].label : "net income";
+      const ideas = {
+        value: [`How has ${company}'s ${label} changed?`, `Which company has the highest ${label}?`],
+        change: [`Show ${company}'s ${label} trend`, `What about ${other}?`],
+        trend: [`Show a chart of ${label}`, `How healthy is ${company}?`],
+        compare: [`How healthy is ${company}?`, `Show a chart of ${label}`],
+        summary: [`Show ${company}'s net income trend`, "Which company has the highest net margin?"],
+        chart: [`Which company has the highest ${label}?`, `How healthy is ${company}?`],
+      }[intent];
+      return ideas ? `\n  You could also ask: "${ideas[0]}" or "${ideas[1]}"` : "";
+    }
+    help() {
+      return "I can answer questions about Microsoft, Tesla and Apple, using their 10-K filings " +
+        `for FY${this.years[0]} to FY${this.latestYear}.\n` +
+        "  Metrics: revenue, net income, total assets, total liabilities, operating cash flow, " +
+        "net margin, leverage and shareholders' equity.\n" +
+        "  Try asking:\n" +
+        "  - What was Apple's revenue in 2025?\n" +
+        "  - How has Tesla's net income changed over the last year?\n" +
+        "  - Show Microsoft's operating cash flow trend\n" +
+        "  - Which company has the highest net margin?\n" +
+        "  - How healthy is Tesla?\n" +
+        "  - Show a chart of revenue\n" +
+        "  - What about Microsoft?  (follow-ups remember what we were discussing)\n" +
+        "  Note: I report figures from company filings. This is not investment advice.";
+    }
+
+    // ---------------- main entry point ----------------
+    respond(message) {
+      const text = message.toLowerCase().replace(/[^\w\s'%-]/g, " ").split(/\s+/).filter(Boolean).join(" ");
+      if (!text) return "Please type a question, or type 'help' to see what I can do.";
+
+      const outside = this.findOutOfScope(text);
+      let companies = this.findCompanies(text);
+      let metric = this.findMetric(text);
+      let year = this.findYear(text);
+      let intent = this.findIntent(text);
+
+      if (intent === "help") return this.help();
+      if (intent === "advice") {
+        let reply = "I can't give investment advice or comment on share prices. I report historical figures " +
+          "from company 10-K filings, which you may find useful alongside advice from a qualified financial adviser.";
+        if (companies.length) {
+          reply += `\n\nHere are the facts for ${companies[0]}:\n` + this.answerSummary(companies[0]);
+          this.memory = { companies: companies.slice(0, 1), metric: null, year: this.latestYear, intent: "summary" };
+        }
+        return reply;
+      }
+      if (intent === "goodbye") return "Goodbye! Thanks for using the GFC Financial Chatbot.";
+      if (intent === "thanks" && !(companies.length || metric)) return "You're welcome. Ask me anything else about Microsoft, Tesla or Apple.";
+      if (intent === "greeting" && !(companies.length || metric)) return "Hello! I'm the GFC Financial Chatbot. Ask me about Microsoft, Tesla or Apple, or type 'help'.";
+      if (outside && !companies.length)
+        return `I don't have data for ${outside}. I currently cover Microsoft, Tesla and Apple for FY${this.years[0]} to FY${this.latestYear}.`;
+      if (typeof year === "string")
+        return `My data covers FY${this.years[0]} to FY${this.latestYear}, so I can't answer for ${year.split(":")[1]}. I won't guess figures I haven't verified.`;
+
+      if (intent === "greeting" || intent === "thanks") intent = null;
+      if (!(companies.length || metric || year || intent))
+        return "Sorry, I didn't understand that. I answer questions about the financial performance of Microsoft, Tesla and Apple. Type 'help' for examples.";
+
+      const cue = ["what about", "how about", "and ", "what of", "same for"].some(c => text.startsWith(c));
+      const partial = !(companies.length && metric);
+      const isFollowUp = !!this.memory.intent && intent === null && (cue || partial);
+
+      if (!companies.length && this.memory.companies.length && (isFollowUp || ["change", "trend", "value"].includes(intent)))
+        companies = this.memory.companies;
+      if (!metric && intent !== "summary" && (isFollowUp || intent)) metric = this.memory.metric;
+      if (year === null) year = isFollowUp && this.memory.year ? this.memory.year : this.latestYear;
+      if (intent === null) intent = isFollowUp ? this.memory.intent : (metric ? "value" : null);
+
+      let answer;
+      if (intent === "summary" && companies.length && !(metric && !contains(text, "health")))
+        answer = companies.map(c => this.answerSummary(c)).join("\n\n");
+      else if (intent === "summary" && !companies.length)
+        answer = this.companies.map(c => this.answerSummary(c)).join("\n\n");
+      else if (!metric)
+        return "I'm not sure which figure you mean. I can tell you about revenue, net income, assets, liabilities, operating cash flow, net margin, leverage or equity. Type 'help' for examples.";
+      else if (intent === "chart") answer = this.answerChart(companies, metric);
+      else if ((intent === "change" || intent === "trend") && !companies.length) {
+        companies = this.companies.slice();
+        answer = companies.map(c => intent === "change" ? this.answerChange(c, metric, year) : this.answerTrend(c, metric)).join("\n\n");
+      } else if (intent === "compare" && this.K.METRICS[metric].growth &&
+                 ["grew", "grow", "growth", "fastest", "slowest", "quickest", "growing"].some(w => contains(text, w)))
+        answer = this.answerGrowthRanking(companies, metric, text);
+      else if (intent === "compare" || (companies.length >= 2 && (intent === null || intent === "value")) || !companies.length) {
+        answer = this.answerCompare(companies, metric, year, text); intent = "compare";
+      } else if (intent === "trend") answer = companies.map(c => this.answerTrend(c, metric)).join("\n\n");
+      else if (intent === "change") answer = companies.map(c => this.answerChange(c, metric, year)).join("\n\n");
+      else { answer = companies.map(c => this.answerValue(c, metric, year)).join("\n\n"); intent = "value"; }
+
+      this.memory = { companies, metric, year, intent };
+      if (this.suggestions) {
+        const mt = answer.match(/\n  1\. (\w+):/);
+        const lead = mt ? mt[1] : (companies.length ? companies[0] : null);
+        answer += this.suggest(intent, lead ? [lead] : companies, metric);
+      }
+      return answer;
+    }
+  }
+
+  root.GFCChatbot = { FinancialChatbot, formatMoney };
+  if (typeof module !== "undefined" && module.exports) module.exports = { FinancialChatbot, formatMoney };
+})(typeof window !== "undefined" ? window : globalThis);
+
+</script>
+<script>
+(function () {
+  const PAYLOAD = {"knowledge": {"COMPANY_ALIASES": {"Microsoft": ["microsoft", "msft"], "Tesla": ["tesla", "tsla"], "Apple": ["apple", "aapl"]}, "OUT_OF_SCOPE_COMPANIES": ["amazon", "google", "alphabet", "meta", "facebook", "nvidia", "netflix", "ibm", "intel", "oracle", "samsung", "toyota", "ford", "byd"], "METRICS": {"revenue": {"column": "Total Revenue", "growth": "Revenue Growth (%)", "label": "total revenue", "kind": "money", "higher_is_better": true, "keywords": ["total revenue", "revenue", "revenues", "sales", "turnover", "top line"]}, "net_income": {"column": "Net Income", "growth": "Net Income Growth (%)", "label": "net income", "kind": "money", "higher_is_better": true, "keywords": ["net income", "net profit", "profit", "profits", "earnings", "earn", "earned", "earns", "bottom line"]}, "assets": {"column": "Total Assets", "growth": "Assets Growth (%)", "label": "total assets", "kind": "money", "higher_is_better": true, "keywords": ["total assets", "assets"]}, "liabilities": {"column": "Total Liabilities", "growth": "Liabilities Growth (%)", "label": "total liabilities", "kind": "money", "higher_is_better": false, "keywords": ["total liabilities", "liabilities", "debt", "debts", "obligations"]}, "operating_cash_flow": {"column": "Cash Flow from Operating Activities", "growth": "Operating Cash Flow Growth (%)", "label": "operating cash flow", "kind": "money", "higher_is_better": true, "keywords": ["cash flow from operating activities", "operating cash flow", "cash from operations", "cash flow", "operating cash", "ocf", "cash generation"]}, "net_margin": {"column": "Net Margin (%)", "growth": null, "label": "net profit margin", "kind": "percent", "higher_is_better": true, "keywords": ["net profit margin", "profit margin", "net margin", "margin", "margins", "profitability", "profitable", "more profitable", "most profitable"], "meaning": "the share of each dollar of revenue kept as profit"}, "leverage": {"column": "Liabilities to Assets (%)", "growth": null, "label": "liabilities-to-assets ratio", "kind": "percent", "higher_is_better": false, "keywords": ["liabilities to assets", "debt ratio", "leverage", "leveraged", "gearing", "geared", "indebted"], "meaning": "the share of the company's assets funded by liabilities; lower means less leveraged"}, "equity": {"column": "Shareholders Equity", "growth": null, "label": "shareholders' equity", "kind": "money", "higher_is_better": true, "keywords": ["shareholders equity", "shareholders' equity", "equity", "net worth", "book value"], "meaning": "total assets minus total liabilities"}}, "CONTEXT_NOTES": {"Tesla|net_income|2023": "FY2023 profit was boosted by a one-off tax benefit from releasing a valuation allowance on deferred tax assets, which makes later years look weaker by comparison.", "Tesla|net_income|2024": "FY2023 included a one-off tax benefit, so part of this fall reflects an unusually high starting point rather than the business alone.", "Tesla|net_income|2025": "Tesla linked the fall to lower vehicle deliveries and regulatory credit revenue, tariffs, and higher spending on AI and R&D.", "Apple|net_income|2024": "FY2024 included a one-time income tax charge of about $10.2bn linked to the European Commission State Aid decision. Without it, net income would have been around $104bn.", "Apple|net_income|2025": "The FY2024 comparison figure was reduced by a one-time tax charge of about $10.2bn, which flatters this year's growth rate.", "Microsoft|assets|2024": "The jump largely reflects the Activision Blizzard acquisition, which added significant goodwill to the balance sheet.", "Apple|leverage|None": "Apple's high ratio is a deliberate choice: it returns large amounts of cash to shareholders through buybacks and dividends, which keeps equity low. It is not a sign of distress."}, "CHART_FILES": {"revenue": "charts/revenue_trend.png", "net_income": "charts/net_income_trend.png", "net_margin": "charts/net_margin_trend.png", "operating_cash_flow": "charts/operating_cash_flow_trend.png"}, "HEALTH_VERDICTS": {"Microsoft": "Strong and improving: the fastest growth, highest margins and falling leverage of the three.", "Apple": "Strong, with growth returning: record net income in FY2025 after a one-off tax charge in FY2024.", "Tesla": "Sound balance sheet but weakening profitability: revenue fell in FY2025 and net income dropped sharply, though cash flow held steady."}, "INTENT_KEYWORDS": {"advice": ["should i buy", "should i sell", "should i invest", "worth buying", "worth investing", "good investment", "buy shares", "sell shares", "buy the stock", "share price", "stock price", "price target", "invest in", "recommend buying", "recommend selling"], "help": ["help", "what can you", "what can i ask", "how do i use", "examples", "options", "menu"], "greeting": ["hello", "hi", "hey", "good morning", "good afternoon", "good evening"], "thanks": ["thank", "thanks", "cheers"], "goodbye": ["bye", "goodbye", "exit", "quit"], "compare": ["compare", "comparison", "which company", "which has", "which had", "highest", "lowest", "biggest", "largest", "smallest", "best", "worst", "most", "least", "rank", "versus", " vs ", "who has", "who had", "all three", "all companies", " than ", "fastest", "slowest", "quickest"], "summary": ["summary", "summarise", "summarize", "overview", "health", "healthy", "how is", "how's", "how are", "doing", "performance", "tell me about", "overall"], "chart": ["chart", "graph", "plot", "visual", "visualise", "visualize", "visualisation", "visualization", "draw", "picture"], "trend": ["trend", "over time", "over the years", "over the last three", "three years", "3 years", "history", "since 2023", "2023 to 2025", "each year"], "change": ["change", "changed", "growth", "grow", "grew", "increase", "increased", "decrease", "decreased", "rise", "rose", "fall", "fell", "drop", "dropped", "up or down", "improve", "decline", "declined", "year on year", "year over year", "yoy"]}}, "rows": [{"Company": "Apple", "Fiscal Year": 2023, "Fiscal Year End": "2023-09-30", "Total Revenue": 383285, "Net Income": 96995, "Total Assets": 352583, "Total Liabilities": 290437, "Cash Flow from Operating Activities": 110543, "Revenue Growth (%)": null, "Net Income Growth (%)": null, "Assets Growth (%)": null, "Liabilities Growth (%)": null, "Operating Cash Flow Growth (%)": null, "Net Margin (%)": 25.31, "Liabilities to Assets (%)": 82.37, "OCF to Net Income (x)": 1.14, "Shareholders Equity": 62146}, {"Company": "Apple", "Fiscal Year": 2024, "Fiscal Year End": "2024-09-28", "Total Revenue": 391035, "Net Income": 93736, "Total Assets": 364980, "Total Liabilities": 308030, "Cash Flow from Operating Activities": 118254, "Revenue Growth (%)": 2.02, "Net Income Growth (%)": -3.36, "Assets Growth (%)": 3.52, "Liabilities Growth (%)": 6.06, "Operating Cash Flow Growth (%)": 6.98, "Net Margin (%)": 23.97, "Liabilities to Assets (%)": 84.4, "OCF to Net Income (x)": 1.26, "Shareholders Equity": 56950}, {"Company": "Apple", "Fiscal Year": 2025, "Fiscal Year End": "2025-09-27", "Total Revenue": 416161, "Net Income": 112010, "Total Assets": 359241, "Total Liabilities": 285508, "Cash Flow from Operating Activities": 111482, "Revenue Growth (%)": 6.43, "Net Income Growth (%)": 19.5, "Assets Growth (%)": -1.57, "Liabilities Growth (%)": -7.31, "Operating Cash Flow Growth (%)": -5.73, "Net Margin (%)": 26.92, "Liabilities to Assets (%)": 79.48, "OCF to Net Income (x)": 1.0, "Shareholders Equity": 73733}, {"Company": "Microsoft", "Fiscal Year": 2023, "Fiscal Year End": "2023-06-30", "Total Revenue": 211915, "Net Income": 72361, "Total Assets": 411976, "Total Liabilities": 205753, "Cash Flow from Operating Activities": 87582, "Revenue Growth (%)": null, "Net Income Growth (%)": null, "Assets Growth (%)": null, "Liabilities Growth (%)": null, "Operating Cash Flow Growth (%)": null, "Net Margin (%)": 34.15, "Liabilities to Assets (%)": 49.94, "OCF to Net Income (x)": 1.21, "Shareholders Equity": 206223}, {"Company": "Microsoft", "Fiscal Year": 2024, "Fiscal Year End": "2024-06-30", "Total Revenue": 245122, "Net Income": 88136, "Total Assets": 512163, "Total Liabilities": 243686, "Cash Flow from Operating Activities": 118548, "Revenue Growth (%)": 15.67, "Net Income Growth (%)": 21.8, "Assets Growth (%)": 24.32, "Liabilities Growth (%)": 18.44, "Operating Cash Flow Growth (%)": 35.36, "Net Margin (%)": 35.96, "Liabilities to Assets (%)": 47.58, "OCF to Net Income (x)": 1.35, "Shareholders Equity": 268477}, {"Company": "Microsoft", "Fiscal Year": 2025, "Fiscal Year End": "2025-06-30", "Total Revenue": 281724, "Net Income": 101832, "Total Assets": 619003, "Total Liabilities": 275524, "Cash Flow from Operating Activities": 136162, "Revenue Growth (%)": 14.93, "Net Income Growth (%)": 15.54, "Assets Growth (%)": 20.86, "Liabilities Growth (%)": 13.07, "Operating Cash Flow Growth (%)": 14.86, "Net Margin (%)": 36.15, "Liabilities to Assets (%)": 44.51, "OCF to Net Income (x)": 1.34, "Shareholders Equity": 343479}, {"Company": "Tesla", "Fiscal Year": 2023, "Fiscal Year End": "2023-12-31", "Total Revenue": 96773, "Net Income": 14997, "Total Assets": 106618, "Total Liabilities": 43009, "Cash Flow from Operating Activities": 13256, "Revenue Growth (%)": null, "Net Income Growth (%)": null, "Assets Growth (%)": null, "Liabilities Growth (%)": null, "Operating Cash Flow Growth (%)": null, "Net Margin (%)": 15.5, "Liabilities to Assets (%)": 40.34, "OCF to Net Income (x)": 0.88, "Shareholders Equity": 63609}, {"Company": "Tesla", "Fiscal Year": 2024, "Fiscal Year End": "2024-12-31", "Total Revenue": 97690, "Net Income": 7091, "Total Assets": 122070, "Total Liabilities": 48390, "Cash Flow from Operating Activities": 14923, "Revenue Growth (%)": 0.95, "Net Income Growth (%)": -52.72, "Assets Growth (%)": 14.49, "Liabilities Growth (%)": 12.51, "Operating Cash Flow Growth (%)": 12.58, "Net Margin (%)": 7.26, "Liabilities to Assets (%)": 39.64, "OCF to Net Income (x)": 2.1, "Shareholders Equity": 73680}, {"Company": "Tesla", "Fiscal Year": 2025, "Fiscal Year End": "2025-12-31", "Total Revenue": 94827, "Net Income": 3794, "Total Assets": 137806, "Total Liabilities": 54941, "Cash Flow from Operating Activities": 14747, "Revenue Growth (%)": -2.93, "Net Income Growth (%)": -46.5, "Assets Growth (%)": 12.89, "Liabilities Growth (%)": 13.54, "Operating Cash Flow Growth (%)": -1.18, "Net Margin (%)": 4.0, "Liabilities to Assets (%)": 39.87, "OCF to Net Income (x)": 3.89, "Shareholders Equity": 82865}]};
+  const { FinancialChatbot } = window.GFCChatbot;
+  const newBot = () => new FinancialChatbot(PAYLOAD.knowledge, PAYLOAD.rows);
+  let bot = newBot();
+
+  const log = document.getElementById("log"), q = document.getElementById("q");
+  function add(text, who) {
+    const d = document.createElement("div");
+    d.className = "msg " + who; d.textContent = text; log.appendChild(d);
+    log.scrollTop = log.scrollHeight;
+  }
+  function greet() { add("Hello! I'm the GFC Financial Chatbot. Ask me about revenue, profit, assets, liabilities, cash flow or margins for Microsoft, Tesla or Apple. Type 'help' for examples.", "bot"); }
+  function ask(text) { if (!text.trim()) return; add(text, "user"); add(bot.respond(text), "bot"); q.value = ""; }
+
+  document.getElementById("f").addEventListener("submit", e => { e.preventDefault(); ask(q.value); });
+  document.getElementById("reset").addEventListener("click", () => { bot = newBot(); log.innerHTML = ""; greet(); });
+
+  const STARTERS = ["What was Apple's revenue in 2025?", "How has Tesla's net income changed over the last year?",
+                    "What about Microsoft?", "Show a chart of revenue", "help"];
+  const chips = document.getElementById("chips");
+  STARTERS.forEach(s => { const b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.textContent = s; b.addEventListener("click", () => ask(s)); chips.appendChild(b); });
+
+  // Checks: each is one conversation; every step must contain its expected text
+  const CHECKS = [
+    { what: "Looks up a value", steps: [["What was Apple's revenue in 2025?", "$416.2bn"]] },
+    { what: "Calculates a change", steps: [["How has Tesla's net income changed over the last year?", "fell 46.5%"]] },
+    { what: "Remembers the topic (follow-up)", steps: [["How has Tesla's net income changed over the last year?", "fell 46.5%"], ["What about Microsoft?", "Microsoft's net income rose 15.5%"]] },
+    { what: "Compares companies", steps: [["Which company has the highest net margin?", "1. Microsoft: 36.1%"]] },
+    { what: "Ranks by growth, not size", steps: [["Which company grew revenue fastest?", "1. Microsoft: +15.3% a year"]] },
+    { what: "Understands everyday words", steps: [["how much did msft earn in fy24", "$88.1bn"]] },
+    { what: "Explains one-off items", steps: [["Apple net income 2024", "one-time income tax charge"]] },
+    { what: "Draws a chart", steps: [["Show a chart of revenue", "Apple up, Microsoft up, Tesla down"]] },
+    { what: "Summarises financial health", steps: [["How healthy is Tesla?", "net margin of 4.0%"]] },
+    { what: "Declines missing companies", steps: [["What is Amazon's revenue?", "I don't have data for Amazon"]] },
+    { what: "Declines years it has no data for", steps: [["Microsoft revenue in 2019", "can't answer for 2019"]] },
+    { what: "Refuses investment advice", steps: [["Should I buy Tesla shares?", "can't give investment advice"]] },
+    { what: "Handles off-topic questions", steps: [["What is the weather?", "didn't understand"]] },
+  ];
+  const list = document.getElementById("checks"), statuses = [];
+  CHECKS.forEach((c, i) => {
+    const li = document.createElement("li"); li.className = "check";
+    const last = c.steps[c.steps.length - 1];
+    const qs = c.steps.map(s => "“" + s[0] + "”").join(" then ");
+    li.innerHTML = '<div><div class="what"></div><div class="q"></div></div><span class="status">Not run</span><div class="expect">Expect: <b></b></div>';
+    li.querySelector(".what").textContent = c.what;
+    li.querySelector(".q").textContent = qs;
+    li.querySelector(".expect b").textContent = last[1];
+    const btn = document.createElement("button"); btn.type = "button"; btn.className = "ghost ask"; btn.textContent = "Ask this in the chat";
+    btn.addEventListener("click", () => { bot = newBot(); log.innerHTML = ""; c.steps.forEach(s => ask(s[0])); mark(i, run(c)); });
+    li.appendChild(btn); list.appendChild(li);
+    statuses.push(li.querySelector(".status"));
+  });
+  function run(c) { const b = newBot(); return c.steps.every(([question, expected]) => b.respond(question).includes(expected)); }
+  function mark(i, ok) { statuses[i].textContent = ok ? "Pass" : "Fail"; statuses[i].className = "status " + (ok ? "pass" : "fail"); updateScore(); }
+  function updateScore() {
+    const run = statuses.filter(s => s.textContent !== "Not run").length, passed = statuses.filter(s => s.textContent === "Pass").length;
+    document.getElementById("score").textContent = passed + " / " + CHECKS.length;
+    document.getElementById("score-text").textContent = run === 0 ? 'Press "Run all checks", or tap "Ask this in the chat" on any check.'
+      : passed === CHECKS.length ? "All checks passed. The chatbot is working correctly."
+      : (run - passed) + " check(s) failed. The failing reply is shown in red.";
+  }
+  document.getElementById("runall").addEventListener("click", () => CHECKS.forEach((c, i) => mark(i, run(c))));
+
+  greet();
+  // Open in a realistic working state: one example exchange already in the chat
+  ask("How has Tesla's net income changed over the last year?");
+  document.getElementById("score").textContent = "0 / " + CHECKS.length;
+})();
+</script>

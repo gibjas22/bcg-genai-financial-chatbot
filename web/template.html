@@ -1,0 +1,208 @@
+<title>GFC Financial Chatbot</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: analyst workbench. Chat console (left) beside a verification checklist (right); stacks on phones. */
+:root {
+  --paper: #f3f5f2;
+  --panel: #ffffff;
+  --ink: #17231d;
+  --muted: #5b6a62;
+  --line: #d9e0db;
+  --accent: #1d6b4f;
+  --accent-soft: #e2efe8;
+  --user: #e8eef9;
+  --user-ink: #1d2b47;
+  --pass: #1f7a4a;
+  --pass-soft: #dff2e6;
+  --fail: #b3261e;
+  --fail-soft: #fbe3e1;
+  --idle: #8a958f;
+  --font-display: "IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Consolas, "Courier New", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0f1512; --panel: #161e1a; --ink: #e3ebe6; --muted: #98a89f; --line: #2a3530;
+    --accent: #5cc493; --accent-soft: #1b2e25; --user: #1d2638; --user-ink: #d6e0f5;
+    --pass: #6ad49b; --pass-soft: #163024; --fail: #f08a82; --fail-soft: #3a1d1b; --idle: #6f7b75;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0f1512; --panel: #161e1a; --ink: #e3ebe6; --muted: #98a89f; --line: #2a3530;
+  --accent: #5cc493; --accent-soft: #1b2e25; --user: #1d2638; --user-ink: #d6e0f5;
+  --pass: #6ad49b; --pass-soft: #163024; --fail: #f08a82; --fail-soft: #3a1d1b; --idle: #6f7b75;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 28px;
+}
+.wrap { max-width: 1180px; margin: 0 auto; display: grid; gap: 18px; }
+header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 8px 24px; border-bottom: 2px solid var(--ink); padding-bottom: 12px; }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.6rem, 3.6vw, 2.2rem); letter-spacing: -0.01em; margin: 0; line-height: 1.1; text-wrap: balance; }
+.sub { margin: 4px 0 0; color: var(--muted); font-size: 0.92rem; }
+.coverage { display: flex; gap: 6px; flex-wrap: wrap; }
+.tag { font-family: var(--font-mono); font-size: 0.75rem; border: 1px solid var(--line); border-radius: 4px; padding: 3px 7px; color: var(--muted); background: var(--panel); }
+.grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+@media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+section { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; min-width: 0; }
+.sec-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 1.1rem; margin: 0; letter-spacing: 0.01em; }
+.eyebrow { font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+/* Chat */
+#log { height: 470px; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.msg { max-width: 94%; border-radius: 10px; padding: 9px 12px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.msg.user { align-self: flex-end; background: var(--user); color: var(--user-ink); }
+.msg.bot { align-self: flex-start; background: var(--accent-soft); font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.55; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 10px; }
+.chip { font: inherit; font-size: 0.8rem; border: 1px solid var(--accent); color: var(--accent); background: transparent; border-radius: 999px; padding: 4px 10px; cursor: pointer; }
+.chip:hover { background: var(--accent-soft); }
+form { display: flex; gap: 8px; padding: 12px 16px 16px; border-top: 1px solid var(--line); }
+#q { flex: 1; min-width: 0; font: inherit; padding: 10px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); color: var(--ink); }
+button.primary { font: inherit; font-weight: 600; background: var(--accent); color: var(--panel); border: 0; border-radius: 6px; padding: 0 16px; cursor: pointer; min-height: 42px; }
+button.ghost { font: inherit; font-size: 0.85rem; background: transparent; color: var(--muted); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+button:focus-visible, .chip:focus-visible, #q:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* Checklist */
+.score { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.score-num { font-family: var(--font-display); font-weight: 600; font-size: 1.6rem; font-variant-numeric: tabular-nums; }
+.score-text { color: var(--muted); font-size: 0.85rem; flex: 1; min-width: 140px; }
+ol.checks { list-style: none; margin: 0; padding: 0; }
+.check { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; padding: 11px 16px; border-bottom: 1px solid var(--line); align-items: start; }
+.check:last-child { border-bottom: 0; }
+.check .what { font-size: 0.78rem; color: var(--muted); }
+.check .q { font-weight: 500; font-size: 0.92rem; }
+.check .expect { font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted); grid-column: 1 / -1; }
+.check .expect b { color: var(--ink); font-weight: 500; }
+.status { font-family: var(--font-mono); font-size: 0.72rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; border-radius: 4px; padding: 3px 7px; white-space: nowrap; color: var(--idle); border: 1px solid var(--line); }
+.status.pass { color: var(--pass); background: var(--pass-soft); border-color: transparent; }
+.status.fail { color: var(--fail); background: var(--fail-soft); border-color: transparent; }
+.check button.ask { justify-self: start; grid-column: 1 / -1; }
+.note { color: var(--muted); font-size: 0.82rem; margin: 0; padding: 12px 16px; border-top: 1px solid var(--line); }
+footer { color: var(--muted); font-size: 0.8rem; }
+@media (prefers-reduced-motion: no-preference) { #log { scroll-behavior: smooth; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>GFC Financial Chatbot</h1>
+      <p class="sub">Ask about Microsoft, Tesla and Apple. Every answer comes from their 10-K filings.</p>
+    </div>
+    <div class="coverage" aria-label="Data coverage">
+      <span class="tag">FY2023 to FY2025</span><span class="tag">US$, 10-K Item 8</span><span class="tag">3 companies · 8 metrics</span>
+    </div>
+  </header>
+
+  <div class="grid">
+    <section aria-labelledby="chat-h">
+      <div class="sec-head">
+        <div><div class="eyebrow">Try it</div><h2 id="chat-h">Chat</h2></div>
+        <button class="ghost" id="reset" type="button">Start new conversation</button>
+      </div>
+      <div id="log" aria-live="polite"></div>
+      <div class="chips" id="chips"></div>
+      <form id="f">
+        <label for="q" class="eyebrow" hidden>Your question</label>
+        <input id="q" autocomplete="off" placeholder="e.g. How healthy is Tesla?">
+        <button class="primary" type="submit">Ask</button>
+      </form>
+    </section>
+
+    <section aria-labelledby="check-h">
+      <div class="sec-head">
+        <div><div class="eyebrow">Check it</div><h2 id="check-h">Test checklist</h2></div>
+        <button class="primary" id="runall" type="button">Run all checks</button>
+      </div>
+      <div class="score">
+        <span class="score-num" id="score">0 / 0</span>
+        <span class="score-text" id="score-text">Press "Run all checks", or tap "Ask this" on any check to see it in the chat.</span>
+      </div>
+      <ol class="checks" id="checks"></ol>
+      <p class="note">Each check asks the question and confirms the reply contains the expected text, taken from the 10-K figures. A pass means the chatbot found the right data and phrased it correctly.</p>
+    </section>
+  </div>
+
+  <footer>Prototype for the BCG GenAI Job Simulation (Forage) by Gibson Nyendwa. Same logic as the Python chatbot, verified answer-for-answer. Not investment advice.</footer>
+</div>
+
+<script>
+/*__ENGINE__*/
+</script>
+<script>
+(function () {
+  const PAYLOAD = "__PAYLOAD__";
+  const { FinancialChatbot } = window.GFCChatbot;
+  const newBot = () => new FinancialChatbot(PAYLOAD.knowledge, PAYLOAD.rows);
+  let bot = newBot();
+
+  const log = document.getElementById("log"), q = document.getElementById("q");
+  function add(text, who) {
+    const d = document.createElement("div");
+    d.className = "msg " + who; d.textContent = text; log.appendChild(d);
+    log.scrollTop = log.scrollHeight;
+  }
+  function greet() { add("Hello! I'm the GFC Financial Chatbot. Ask me about revenue, profit, assets, liabilities, cash flow or margins for Microsoft, Tesla or Apple. Type 'help' for examples.", "bot"); }
+  function ask(text) { if (!text.trim()) return; add(text, "user"); add(bot.respond(text), "bot"); q.value = ""; }
+
+  document.getElementById("f").addEventListener("submit", e => { e.preventDefault(); ask(q.value); });
+  document.getElementById("reset").addEventListener("click", () => { bot = newBot(); log.innerHTML = ""; greet(); });
+
+  const STARTERS = ["What was Apple's revenue in 2025?", "How has Tesla's net income changed over the last year?",
+                    "What about Microsoft?", "Show a chart of revenue", "help"];
+  const chips = document.getElementById("chips");
+  STARTERS.forEach(s => { const b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.textContent = s; b.addEventListener("click", () => ask(s)); chips.appendChild(b); });
+
+  // Checks: each is one conversation; every step must contain its expected text
+  const CHECKS = [
+    { what: "Looks up a value", steps: [["What was Apple's revenue in 2025?", "$416.2bn"]] },
+    { what: "Calculates a change", steps: [["How has Tesla's net income changed over the last year?", "fell 46.5%"]] },
+    { what: "Remembers the topic (follow-up)", steps: [["How has Tesla's net income changed over the last year?", "fell 46.5%"], ["What about Microsoft?", "Microsoft's net income rose 15.5%"]] },
+    { what: "Compares companies", steps: [["Which company has the highest net margin?", "1. Microsoft: 36.1%"]] },
+    { what: "Ranks by growth, not size", steps: [["Which company grew revenue fastest?", "1. Microsoft: +15.3% a year"]] },
+    { what: "Understands everyday words", steps: [["how much did msft earn in fy24", "$88.1bn"]] },
+    { what: "Explains one-off items", steps: [["Apple net income 2024", "one-time income tax charge"]] },
+    { what: "Draws a chart", steps: [["Show a chart of revenue", "Apple up, Microsoft up, Tesla down"]] },
+    { what: "Summarises financial health", steps: [["How healthy is Tesla?", "net margin of 4.0%"]] },
+    { what: "Declines missing companies", steps: [["What is Amazon's revenue?", "I don't have data for Amazon"]] },
+    { what: "Declines years it has no data for", steps: [["Microsoft revenue in 2019", "can't answer for 2019"]] },
+    { what: "Refuses investment advice", steps: [["Should I buy Tesla shares?", "can't give investment advice"]] },
+    { what: "Handles off-topic questions", steps: [["What is the weather?", "didn't understand"]] },
+  ];
+  const list = document.getElementById("checks"), statuses = [];
+  CHECKS.forEach((c, i) => {
+    const li = document.createElement("li"); li.className = "check";
+    const last = c.steps[c.steps.length - 1];
+    const qs = c.steps.map(s => "“" + s[0] + "”").join(" then ");
+    li.innerHTML = '<div><div class="what"></div><div class="q"></div></div><span class="status">Not run</span><div class="expect">Expect: <b></b></div>';
+    li.querySelector(".what").textContent = c.what;
+    li.querySelector(".q").textContent = qs;
+    li.querySelector(".expect b").textContent = last[1];
+    const btn = document.createElement("button"); btn.type = "button"; btn.className = "ghost ask"; btn.textContent = "Ask this in the chat";
+    btn.addEventListener("click", () => { bot = newBot(); log.innerHTML = ""; c.steps.forEach(s => ask(s[0])); mark(i, run(c)); });
+    li.appendChild(btn); list.appendChild(li);
+    statuses.push(li.querySelector(".status"));
+  });
+  function run(c) { const b = newBot(); return c.steps.every(([question, expected]) => b.respond(question).includes(expected)); }
+  function mark(i, ok) { statuses[i].textContent = ok ? "Pass" : "Fail"; statuses[i].className = "status " + (ok ? "pass" : "fail"); updateScore(); }
+  function updateScore() {
+    const run = statuses.filter(s => s.textContent !== "Not run").length, passed = statuses.filter(s => s.textContent === "Pass").length;
+    document.getElementById("score").textContent = passed + " / " + CHECKS.length;
+    document.getElementById("score-text").textContent = run === 0 ? 'Press "Run all checks", or tap "Ask this in the chat" on any check.'
+      : passed === CHECKS.length ? "All checks passed. The chatbot is working correctly."
+      : (run - passed) + " check(s) failed. The failing reply is shown in red.";
+  }
+  document.getElementById("runall").addEventListener("click", () => CHECKS.forEach((c, i) => mark(i, run(c))));
+
+  greet();
+  // Open in a realistic working state: one example exchange already in the chat
+  ask("How has Tesla's net income changed over the last year?");
+  document.getElementById("score").textContent = "0 / " + CHECKS.length;
+})();
+</script>
